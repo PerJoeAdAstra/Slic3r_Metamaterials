@@ -14,6 +14,7 @@
 #include "FillGyroid.hpp"
 #include "FillPlanePath.hpp"
 #include "FillRectilinear.hpp"
+#include "FillTest.hpp"
 
 namespace Slic3r {
 
@@ -25,19 +26,21 @@ Fill::new_from_type(const InfillPattern type)
         case ipHoneycomb:           return new FillHoneycomb();
         case ip3DHoneycomb:         return new Fill3DHoneycomb();
         case ipGyroid:              return new FillGyroid();
-        
+
         case ipRectilinear:         return new FillRectilinear();
         case ipAlignedRectilinear:  return new FillAlignedRectilinear();
         case ipGrid:                return new FillGrid();
-        
+
         case ipTriangles:           return new FillTriangles();
         case ipStars:               return new FillStars();
         case ipCubic:               return new FillCubic();
-        
+
         case ipArchimedeanChords:   return new FillArchimedeanChords();
         case ipHilbertCurve:        return new FillHilbertCurve();
         case ipOctagramSpiral:      return new FillOctagramSpiral();
-        
+
+        case ipTest:                return new FillTest();
+
         default: CONFESS("unknown type"); return NULL;
     }
 }
@@ -54,13 +57,13 @@ Polylines
 Fill::fill_surface(const Surface &surface)
 {
     if (this->density == 0) return Polylines();
-    
+
     // Perform offset.
     ExPolygons expp = offset_ex(surface.expolygon, -scale_(this->min_spacing)/2);
-    
+
     // Implementations can change this if they adjust the flow.
     this->_spacing = this->min_spacing;
-    
+
     // Create the infills for each of the regions.
     Polylines polylines_out;
     for (size_t i = 0; i < expp.size(); ++i)

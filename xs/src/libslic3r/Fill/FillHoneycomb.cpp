@@ -9,8 +9,8 @@ namespace Slic3r {
 void
 FillHoneycomb::_fill_surface_single(
     unsigned int                    thickness_layers,
-    const direction_t               &direction, 
-    ExPolygon                       &expolygon, 
+    const direction_t               &direction,
+    ExPolygon                       &expolygon,
     Polylines*                      polylines_out)
 {
     // cache hexagons math
@@ -36,14 +36,14 @@ FillHoneycomb::_fill_surface_single(
     {
         // adjust actual bounding box to the nearest multiple of our hex pattern
         // and align it so that it matches across layers
-        
+
         BoundingBox bounding_box = expolygon.contour.bounding_box();
         {
             // rotate bounding box according to infill direction
             Polygon bb_polygon = bounding_box.polygon();
             bb_polygon.rotate(direction.first, m.hex_center);
             bounding_box = bb_polygon.bounding_box();
-            
+
             // extend bounding box so that our pattern will be aligned with other layers
             // $bounding_box->[X1] and [Y1] represent the displacement between new bounding box offset and old one
             // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
@@ -71,7 +71,7 @@ FillHoneycomb::_fill_surface_single(
             polygons.push_back(p);
         }
     }
-    
+
     if (true || this->complete) {
         // we were requested to complete each loop;
         // in this case we don't try to make more continuous paths
@@ -80,7 +80,7 @@ FillHoneycomb::_fill_surface_single(
             polylines_out->push_back(it->split_at_first_point());
     } else {
         // consider polygons as polylines without re-appending the initial point:
-        // this cuts the last segment on purpose, so that the jump to the next 
+        // this cuts the last segment on purpose, so that the jump to the next
         // path is more straight
         Polylines paths = intersection_pl(
             to_polylines(polygons),
@@ -96,7 +96,7 @@ FillHoneycomb::_fill_surface_single(
             );
             assert(paths.empty());
             paths.clear();
-            
+
             for (Polylines::iterator it_path = chained.begin(); it_path != chained.end(); ++ it_path) {
                 if (!paths.empty()) {
                     // distance between first point of this path and last point of last path
@@ -110,10 +110,10 @@ FillHoneycomb::_fill_surface_single(
                 paths.push_back(*it_path);
             }
         }
-        
+
         // clip paths again to prevent connection segments from crossing the expolygon boundaries
         paths = intersection_pl(paths, to_polygons(offset_ex(expolygon, SCALED_EPSILON)));
-        
+
         // Move the polylines to the output, avoid a deep copy.
         size_t j = polylines_out->size();
         polylines_out->resize(j + paths.size(), Polyline());
