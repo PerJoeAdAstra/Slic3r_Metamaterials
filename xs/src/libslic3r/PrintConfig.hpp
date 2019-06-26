@@ -249,6 +249,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionBool                extra_perimeters;
     ConfigOptionFloat               fill_angle;
     ConfigOptionPercent             fill_density;
+    ConfigOptionFloat               fill_test_angle;
     ConfigOptionBool                fill_gaps;
     ConfigOptionEnum<InfillPattern> fill_pattern;
     ConfigOptionFloatOrPercent      gap_fill_speed;
@@ -292,6 +293,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(extra_perimeters);
         OPT_PTR(fill_angle);
         OPT_PTR(fill_density);
+        OPT_PTR(fill_test_angle);
         OPT_PTR(fill_gaps);
         OPT_PTR(fill_pattern);
         OPT_PTR(gap_fill_speed);

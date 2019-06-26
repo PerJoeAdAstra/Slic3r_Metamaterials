@@ -470,7 +470,7 @@ PrintConfigDef::PrintConfigDef()
     def->default_value = new ConfigOptionString("");
 
     def = this->add("fill_angle", coFloat);
-    def->label = __TRANS("Fill angle");
+    def->label = __TRANS("Fill angle - wow!!");
     def->category = __TRANS("Infill");
     def->tooltip = __TRANS("Default base angle for infill orientation. Cross-hatching will be applied to this. Bridges will be infilled using the best direction Slic3r can detect, so this setting does not affect them.");
     def->sidetext = "°";
@@ -518,6 +518,16 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back("90%");
     def->enum_labels.push_back("100%");
     def->default_value = new ConfigOptionPercent(20);
+
+    def = this->add("fill_test_angle", coFloat);
+    def->label = __TRANS("Fill test angle");
+    def->category = __TRANS("Infill");
+    def->tooltip = __TRANS("Angle (theta) of the rentrant hexagon in degrees.");
+    def->sidetext = "°";
+    def->cli = "fill-test-angle=f";
+    def->min = 0;
+    def->max = 30;
+    def->default_value = new ConfigOptionFloat(0);
 
     def = this->add("fill_gaps", coBool);
     def->label = __TRANS("Fill gaps");
@@ -818,16 +828,16 @@ PrintConfigDef::PrintConfigDef()
     def->default_value = new ConfigOptionInt(100);
 
     def = this->add("max_layer_height", coFloats);
-	def->label = "Max";
-	def->tooltip = "This is the highest printable layer height for this extruder and limits the resolution for adaptive slicing. Typical values are slightly smaller than nozzle_diameter.";
-	def->sidetext = "mm";
-	def->cli = "max-layer-height=f@";
-	def->min = 0;
-	{
-		ConfigOptionFloats* opt = new ConfigOptionFloats();
-		opt->values.push_back(0.3);
-		def->default_value = opt;
-	}
+  	def->label = "Max";
+  	def->tooltip = "This is the highest printable layer height for this extruder and limits the resolution for adaptive slicing. Typical values are slightly smaller than nozzle_diameter.";
+  	def->sidetext = "mm";
+  	def->cli = "max-layer-height=f@";
+  	def->min = 0;
+  	{
+  		ConfigOptionFloats* opt = new ConfigOptionFloats();
+  		opt->values.push_back(0.3);
+  		def->default_value = opt;
+  	}
 
     def = this->add("max_print_speed", coFloat);
     def->label = __TRANS("Max print speed");
@@ -1817,7 +1827,7 @@ DynamicPrintConfig::normalize() {
         {
             this->opt<ConfigOptionInt>("perimeters", true)->value       = 1;
             this->opt<ConfigOptionInt>("top_solid_layers", true)->value = 0;
-            this->opt<ConfigOptionPercent>("fill_density", true)->value  = 0;
+            this->opt<ConfigOptionPercent>("fill_density", true)->value = 0;
         }
     }
 }

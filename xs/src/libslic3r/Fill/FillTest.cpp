@@ -40,7 +40,7 @@ FillTest::_fill_surface_single(
 
         m.w = 1 * m.distance;  //This should scale the entire object based
         m.h = 1 * m.distance;
-        m.theta = 0.3f;
+        m.theta = this->test_angle;
 
         m.hex_side          = m.h;
         m.hex_width         = m.w * 2; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
