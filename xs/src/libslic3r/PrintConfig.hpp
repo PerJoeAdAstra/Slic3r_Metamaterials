@@ -38,7 +38,7 @@ enum InfillPattern {
     ipTriangles, ipStars, ipCubic,
     ipConcentric, ipHoneycomb, ip3DHoneycomb,
     ipGyroid, ipHilbertCurve, ipArchimedeanChords, ipOctagramSpiral,
-    ipTest,
+    ipReentrantHex,
 };
 
 enum SupportMaterialPattern {
@@ -85,7 +85,7 @@ template<> inline t_config_enum_values ConfigOptionEnum<InfillPattern>::get_enum
     keys_map["hilbertcurve"]        = ipHilbertCurve;
     keys_map["archimedeanchords"]   = ipArchimedeanChords;
     keys_map["octagramspiral"]      = ipOctagramSpiral;
-    keys_map["test"]                = ipTest;
+    keys_map["reentranthex"]        = ipReentrantHex;
     return keys_map;
 }
 
@@ -249,7 +249,9 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionBool                extra_perimeters;
     ConfigOptionFloat               fill_angle;
     ConfigOptionPercent             fill_density;
-    ConfigOptionFloat               fill_test_angle;
+    ConfigOptionFloat               fill_meta_angle;
+    ConfigOptionFloat               fill_meta_h;
+    ConfigOptionFloat               fill_meta_l;
     ConfigOptionBool                fill_gaps;
     ConfigOptionEnum<InfillPattern> fill_pattern;
     ConfigOptionFloatOrPercent      gap_fill_speed;
@@ -293,7 +295,9 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(extra_perimeters);
         OPT_PTR(fill_angle);
         OPT_PTR(fill_density);
-        OPT_PTR(fill_test_angle);
+        OPT_PTR(fill_meta_angle);
+        OPT_PTR(fill_meta_l);
+        OPT_PTR(fill_meta_h);
         OPT_PTR(fill_gaps);
         OPT_PTR(fill_pattern);
         OPT_PTR(gap_fill_speed);

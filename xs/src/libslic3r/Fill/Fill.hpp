@@ -63,7 +63,11 @@ public:
 
     //For renrant hexagons
     //angle in radians of
-    int       test_angle;
+    float       meta_angle;
+
+    float       meta_h;
+
+    float       meta_l;
 
 public:
     static Fill* new_from_type(const InfillPattern type);
@@ -103,7 +107,9 @@ protected:
         dont_adjust(false),
         complete(false),
         _spacing(0.f),
-        test_angle(0)
+        meta_angle(0),
+        meta_h(0),
+        meta_l(0)
         {};
 
     typedef std::pair<float, Point> direction_t;

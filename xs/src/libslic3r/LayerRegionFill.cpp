@@ -236,7 +236,10 @@ LayerRegion::make_fill()
         f->angle    = Geometry::deg2rad(this->region()->config.fill_angle.value);
 
         //insert the test angle, could do safety tests here?
-        f->test_angle = Geometry::deg2rad(this->region()->config.fill_test_angle.value);
+        f->meta_angle = Geometry::deg2rad(this->region()->config.fill_meta_angle.value);
+        f->meta_h = this->region()->config.fill_meta_h;
+        f->meta_l = this->region()->config.fill_meta_l;
+
 
         // Maximum length of the perimeter segment linking two infill lines.
         f->link_max_length = (!is_bridge && density > 80)

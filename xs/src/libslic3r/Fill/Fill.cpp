@@ -14,7 +14,7 @@
 #include "FillGyroid.hpp"
 #include "FillPlanePath.hpp"
 #include "FillRectilinear.hpp"
-#include "FillTest.hpp"
+#include "FillReentrantHex.hpp"
 
 namespace Slic3r {
 
@@ -39,7 +39,7 @@ Fill::new_from_type(const InfillPattern type)
         case ipHilbertCurve:        return new FillHilbertCurve();
         case ipOctagramSpiral:      return new FillOctagramSpiral();
 
-        case ipTest:                return new FillTest();
+        case ipReentrantHex:        return new FillReentrantHex();
 
         default: CONFESS("unknown type"); return NULL;
     }

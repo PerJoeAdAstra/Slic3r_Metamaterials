@@ -1,5 +1,5 @@
-#ifndef slic3r_FillTest_hpp_
-#define slic3r_FillTest_hpp_
+#ifndef slic3r_ReentrantHex_hpp_
+#define slic3r_ReentrantHex_hpp_
 
 #include <map>
 
@@ -9,13 +9,13 @@
 
 namespace Slic3r {
 
-class FillTest : public Fill
+class FillReentrantHex : public Fill
 {
 public:
-    virtual ~FillTest() {}
+    virtual ~FillReentrantHex() {}
 
 protected:
-    virtual Fill* clone() const { return new FillTest(*this); };
+    virtual Fill* clone() const { return new FillReentrantHex(*this); };
 	virtual void _fill_surface_single(
 	    unsigned int                     thickness_layers,
 	    const direction_t               &direction,
@@ -48,4 +48,4 @@ protected:
 
 } // namespace Slic3r
 
-#endif // slic3r_FillTest_hpp_
+#endif // slic3r_FillReentrantHex_hpp_

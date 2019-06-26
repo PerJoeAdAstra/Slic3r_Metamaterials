@@ -1,4 +1,4 @@
-#include "FillTest.hpp"
+#include "FillReentrantHex.hpp"
 #include "../ClipperUtils.hpp"
 #include "../PolylineCollection.hpp"
 #include "../Surface.hpp"
@@ -7,7 +7,7 @@
 namespace Slic3r {
 
 void
-FillTest::_fill_surface_single(
+FillReentrantHex::_fill_surface_single(
     unsigned int                    thickness_layers,
     const direction_t               &direction,
     ExPolygon                       &expolygon,
@@ -21,26 +21,11 @@ FillTest::_fill_surface_single(
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
 
-        //original
-        // m.distance          = min_spacing / this->density;
-        // m.hex_side          = m.distance / (sqrt(3)/2);
-        // m.hex_width         = m.distance * 2; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
-        // coord_t hex_height  = m.hex_side * 2;
-        // m.pattern_height    = hex_height + m.hex_side;
-        // m.y_short           = m.distance * sqrt(3)/3;
-        // m.x_offset          = min_spacing / 2;
-        // m.y_offset          = m.x_offset * sqrt(3)/3;
-        // m.hex_center        = Point(m.hex_width/2, m.hex_side);
+        m.distance          = min_spacing / this->density; //used as scaling factor
 
-
-        m.distance          = min_spacing / this->density;
-
-        //This does not scale correctly!
-        // width and height changes correctly just not the y_short
-
-        m.w = 1 * m.distance;  //This should scale the entire object based
-        m.h = 1 * m.distance;
-        m.theta = this->test_angle;
+        m.w = this->meta_l * m.distance;
+        m.h = this->meta_h * m.distance;
+        m.theta = this->meta_angle;
 
         m.hex_side          = m.h;
         m.hex_width         = m.w * 2; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
