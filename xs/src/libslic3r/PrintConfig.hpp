@@ -38,7 +38,7 @@ enum InfillPattern {
     ipTriangles, ipStars, ipCubic,
     ipConcentric, ipHoneycomb, ip3DHoneycomb,
     ipGyroid, ipHilbertCurve, ipArchimedeanChords, ipOctagramSpiral,
-    ipReentrantHex,
+    ipReentrantHex, ipArrowhead,
 };
 
 enum SupportMaterialPattern {
@@ -86,6 +86,7 @@ template<> inline t_config_enum_values ConfigOptionEnum<InfillPattern>::get_enum
     keys_map["archimedeanchords"]   = ipArchimedeanChords;
     keys_map["octagramspiral"]      = ipOctagramSpiral;
     keys_map["reentranthex"]        = ipReentrantHex;
+    keys_map["arrowhead"]           = ipArrowhead;
     return keys_map;
 }
 

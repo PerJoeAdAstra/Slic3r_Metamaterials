@@ -575,6 +575,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_values.push_back("archimedeanchords");
     def->enum_values.push_back("octagramspiral");
     def->enum_values.push_back("reentranthex");
+    def->enum_values.push_back("arrowhead");
     def->enum_labels.push_back(__TRANS("Rectilinear"));
     def->enum_labels.push_back(__TRANS("Aligned Rectilinear"));
     def->enum_labels.push_back(__TRANS("Grid"));
@@ -589,6 +590,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back(__TRANS("Archimedean Chords"));
     def->enum_labels.push_back(__TRANS("Octagram Spiral"));
     def->enum_labels.push_back(__TRANS("Reentrant Hex"));
+    def->enum_labels.push_back(__TRANS("Arrowhead"));
     def->default_value = new ConfigOptionEnum<InfillPattern>(ipStars);
 
     def = this->add("first_layer_acceleration", coFloat);
