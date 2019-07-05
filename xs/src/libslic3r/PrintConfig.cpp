@@ -469,7 +469,7 @@ PrintConfigDef::PrintConfigDef()
     def->default_value = new ConfigOptionString("");
 
     def = this->add("fill_angle", coFloat);
-    def->label = __TRANS("Fill angle - wow!!");
+    def->label = __TRANS("Fill angle");
     def->category = __TRANS("Infill");
     def->tooltip = __TRANS("Default base angle for infill orientation. Cross-hatching will be applied to this. Bridges will be infilled using the best direction Slic3r can detect, so this setting does not affect them.");
     def->sidetext = "°";
@@ -521,31 +521,31 @@ PrintConfigDef::PrintConfigDef()
     def = this->add("fill_meta_angle", coFloat);
     def->label = __TRANS("Fill meta angle");
     def->category = __TRANS("Infill");
-    def->tooltip = __TRANS("Angle (theta) of the rentrant hexagon in degrees.");
+    def->tooltip = __TRANS("Angle (theta) of a metamaterial pattern.");
     def->sidetext = "°";
     def->cli = "fill-meta-angle=f";
     def->min = 0;
     def->max = 30;
-    def->default_value = new ConfigOptionFloat(0);
+    def->default_value = new ConfigOptionFloat(10);
 
     def = this->add("fill_meta_h", coFloat);
     def->label = __TRANS("Fill meta height");
     def->category = __TRANS("Infill");
-    def->tooltip = __TRANS("Height of the rentrant hexagon in degrees.");
-    def->sidetext = "°";
+    def->tooltip = __TRANS("Height of a metamaterial pattern.");
+    def->sidetext = "";
     def->cli = "fill-meta-h=f";
     def->min = 0;
-    def->max = 30;
+    def->max = 10;
     def->default_value = new ConfigOptionFloat(1);
 
     def = this->add("fill_meta_l", coFloat);
     def->label = __TRANS("Fill meta l");
     def->category = __TRANS("Infill");
-    def->tooltip = __TRANS("l value of the fill rentrant Hexagon.");
-    def->sidetext = "°";
+    def->tooltip = __TRANS("l value of a metamaterial pattern.");
+    def->sidetext = "";
     def->cli = "fill-meta-l=f";
     def->min = 0;
-    def->max = 30;
+    def->max = 10;
     def->default_value = new ConfigOptionFloat(1);
 
     def = this->add("fill_gaps", coBool);
@@ -576,6 +576,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_values.push_back("octagramspiral");
     def->enum_values.push_back("reentranthex");
     def->enum_values.push_back("arrowhead");
+    def->enum_values.push_back("reentrantstars");
     def->enum_labels.push_back(__TRANS("Rectilinear"));
     def->enum_labels.push_back(__TRANS("Aligned Rectilinear"));
     def->enum_labels.push_back(__TRANS("Grid"));
@@ -591,6 +592,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back(__TRANS("Octagram Spiral"));
     def->enum_labels.push_back(__TRANS("Reentrant Hex"));
     def->enum_labels.push_back(__TRANS("Arrowhead"));
+    def->enum_labels.push_back(__TRANS("Reentrant Stars"));
     def->default_value = new ConfigOptionEnum<InfillPattern>(ipStars);
 
     def = this->add("first_layer_acceleration", coFloat);

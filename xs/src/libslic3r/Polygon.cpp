@@ -72,11 +72,29 @@ Polygon::split_at_index(int index) const
     return polyline;
 }
 
+Polyline
+Polygon::split_at_index_no_loop(int index) const
+{
+  Polyline polyline;
+  polyline.points.reserve(this->points.size() + 1);
+  for (Points::const_iterator it = this->points.begin() + index; it != this->points.end(); ++it)
+      polyline.points.push_back(*it);
+  for (Points::const_iterator it = this->points.begin(); it != this->points.begin() + index; ++it)
+      polyline.points.push_back(*it);
+  return polyline;
+}
+
 // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
 Polyline
 Polygon::split_at_first_point() const
 {
     return this->split_at_index(0);
+}
+
+Polyline
+Polygon::split_at_first_point_no_loop() const
+{
+    return this->split_at_index_no_loop(0);
 }
 
 Points
@@ -221,7 +239,7 @@ Polygon::simplify(double tolerance) const
     points.push_back(points.front());
     Polygon p(MultiPoint::_douglas_peucker(points, tolerance));
     p.points.pop_back();
-    
+
     return simplify_polygons(p);
 }
 
@@ -243,7 +261,7 @@ Polygon::triangulate_convex(Polygons* polygons) const
         p.points.push_back(this->points.front());
         p.points.push_back(*(it-1));
         p.points.push_back(*it);
-        
+
         // this should be replaced with a more efficient call to a merge_collinear_segments() method
         if (p.area() > 0) polygons->push_back(p);
     }
@@ -256,13 +274,13 @@ Polygon::centroid() const
     double area_temp = this->area();
     double x_temp = 0;
     double y_temp = 0;
-    
+
     Polyline polyline = this->split_at_first_point();
     for (Points::const_iterator point = polyline.points.begin(); point != polyline.points.end() - 1; ++point) {
         x_temp += (double)( point->x + (point+1)->x ) * ( (double)point->x*(point+1)->y - (double)(point+1)->x*point->y );
         y_temp += (double)( point->y + (point+1)->y ) * ( (double)point->x*(point+1)->y - (double)(point+1)->x*point->y );
     }
-    
+
     return Point(x_temp/(6*area_temp), y_temp/(6*area_temp));
 }
 
@@ -287,20 +305,20 @@ Polygon::concave_points(double angle) const
     angle = 2*PI - angle + EPSILON;
     const Points &pp = this->points;
     Points concave;
-    
+
     // check whether first point forms a concave angle
     if (pp.front().ccw_angle(pp.back(), *(pp.begin()+1)) <= angle)
         concave.push_back(pp.front());
-    
+
     // check whether points 1..(n-1) form concave angles
     for (Points::const_iterator p = pp.begin()+1; p != pp.end()-1; ++p)
         if (p->ccw_angle(*(p-1), *(p+1)) <= angle)
             concave.push_back(*p);
-    
+
     // check whether last point forms a concave angle
     if (pp.back().ccw_angle(*(pp.end()-2), pp.front()) <= angle)
         concave.push_back(pp.back());
-    
+
     return concave;
 }
 
@@ -312,20 +330,20 @@ Polygon::convex_points(double angle) const
     angle = 2*PI - angle - EPSILON;
     const Points &pp = this->points;
     Points convex;
-    
+
     // check whether first point forms a convex angle
     if (pp.front().ccw_angle(pp.back(), *(pp.begin()+1)) >= angle)
         convex.push_back(pp.front());
-    
+
     // check whether points 1..(n-1) form convex angles
     for (Points::const_iterator p = pp.begin()+1; p != pp.end()-1; ++p)
         if (p->ccw_angle(*(p-1), *(p+1)) >= angle)
             convex.push_back(*p);
-    
+
     // check whether last point forms a convex angle
     if (pp.back().ccw_angle(*(pp.end()-2), pp.front()) >= angle)
         convex.push_back(pp.back());
-    
+
     return convex;
 }
 

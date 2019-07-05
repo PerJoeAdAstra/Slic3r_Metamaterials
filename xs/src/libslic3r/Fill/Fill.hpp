@@ -61,7 +61,7 @@ public:
     /// in this case we don't try to make more continuous paths
     bool        complete;
 
-    //For renrant hexagons
+    //For Metamaterials
     //angle in radians of
     float       meta_angle;
 

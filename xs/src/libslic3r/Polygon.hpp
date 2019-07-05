@@ -19,7 +19,7 @@ class Polygon : public MultiPoint {
     operator Polyline() const;
     Point& operator[](Points::size_type idx);
     const Point& operator[](Points::size_type idx) const;
-    
+
     Polygon() {};
 
     explicit Polygon(const Points &points): MultiPoint(points) {};
@@ -28,8 +28,15 @@ class Polygon : public MultiPoint {
     Polyline split_at_vertex(const Point &point) const;
     // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
     Polyline split_at_index(int index) const;
+
     // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
     Polyline split_at_first_point() const;
+
+    //split an open polygon into an open polyline with no duplication of points.
+    Polyline split_at_index_no_loop(int index) const;
+    Polyline split_at_first_point_no_loop() const;
+
+
     Points equally_spaced_points(double distance) const;
     double area() const;
     bool is_counter_clockwise() const;
@@ -58,7 +65,7 @@ class Polygon : public MultiPoint {
 // Append a vector of polygons at the end of another vector of polygons.
 inline void        polygons_append(Polygons &dst, const Polygons &src) { dst.insert(dst.end(), src.begin(), src.end()); }
 
-inline void        polygons_append(Polygons &dst, Polygons &&src) 
+inline void        polygons_append(Polygons &dst, Polygons &&src)
 {
     if (dst.empty()) {
         dst = std::move(src);
@@ -133,7 +140,7 @@ namespace boost { namespace polygon {
             return polygon;
         }
     };
-    
+
     template <>
     struct geometry_concept<Polygons> { typedef polygon_set_concept type; };
 
