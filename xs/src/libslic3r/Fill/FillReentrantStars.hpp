@@ -34,6 +34,12 @@ protected:
         coord_t x_offset;
         coord_t	y_offset;
         Point	hex_center;
+        coord_t starOffset;
+        coord_t starHeight;
+        coord_t in_short;
+        coord_t in_long;
+        coord_t out_short;
+        coord_t out_long;
     };
     typedef std::pair<float,coordf_t> CacheID;  // density, spacing
     typedef std::map<CacheID, CacheData> Cache;

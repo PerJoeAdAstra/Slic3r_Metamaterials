@@ -75,13 +75,13 @@ Polygon::split_at_index(int index) const
 Polyline
 Polygon::split_at_index_no_loop(int index) const
 {
-  Polyline polyline;
-  polyline.points.reserve(this->points.size() + 1);
-  for (Points::const_iterator it = this->points.begin() + index; it != this->points.end(); ++it)
-      polyline.points.push_back(*it);
-  for (Points::const_iterator it = this->points.begin(); it != this->points.begin() + index; ++it)
-      polyline.points.push_back(*it);
-  return polyline;
+    Polyline polyline;
+    polyline.points.reserve(this->points.size());
+    for (Points::const_iterator it = this->points.begin() + index; it != this->points.end(); ++it)
+        polyline.points.push_back(*it);
+    for (Points::const_iterator it = this->points.begin(); it != this->points.begin() + index; ++it)
+        polyline.points.push_back(*it);
+    return polyline;
 }
 
 // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
