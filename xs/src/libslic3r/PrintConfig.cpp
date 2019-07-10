@@ -471,9 +471,19 @@ PrintConfigDef::PrintConfigDef()
     def = this->add("fill_angle", coFloat);
     def->label = __TRANS("Fill angle");
     def->category = __TRANS("Infill");
-    def->tooltip = __TRANS("Default base angle for infill orientation. Cross-hatching will be applied to this. Bridges will be infilled using the best direction Slic3r can detect, so this setting does not affect them.");
+    def->tooltip = __TRANS("Default base angle for fill orientation. Cross-hatching will be applied to this. Bridges will be infilled using the best direction Slic3r can detect, so this setting does not affect them.");
     def->sidetext = "°";
     def->cli = "fill-angle=i";
+    def->min = 0;
+    def->max = 359;
+    def->default_value = new ConfigOptionFloat(45);
+
+    def = this->add("fill_infill_angle", coFloat);
+    def->label = __TRANS("infill angle");
+    def->category = __TRANS("Infill");
+    def->tooltip = __TRANS("Default base angle for infill orientation.");
+    def->sidetext = "°";
+    def->cli = "infill-angle=i";
     def->min = 0;
     def->max = 359;
     def->default_value = new ConfigOptionFloat(0);

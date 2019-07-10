@@ -47,7 +47,7 @@ FillArrowhead::_fill_surface_single(
         {
             // rotate bounding box according to infill direction
             Polygon bb_polygon = bounding_box.polygon();
-            bb_polygon.rotate(this->angle, m.hex_center);
+            bb_polygon.rotate(this->infill_angle, m.hex_center);
             bounding_box = bb_polygon.bounding_box();
 
             // extend bounding box so that our pattern will be aligned with other layers
@@ -71,7 +71,7 @@ FillArrowhead::_fill_surface_single(
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.w;
             }
-            p.rotate(-this->angle, m.hex_center);
+            p.rotate(-this->infill_angle, m.hex_center);
             polygons.push_back(p);
         }
     }

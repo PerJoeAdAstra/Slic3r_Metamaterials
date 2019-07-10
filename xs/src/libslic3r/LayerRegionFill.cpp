@@ -234,7 +234,7 @@ LayerRegion::make_fill()
         f->layer_id = this->layer()->id();
         f->z        = this->layer()->print_z;
         f->angle    = Geometry::deg2rad(this->region()->config.fill_angle.value);
-
+        f->infill_angle = Geometry::deg2rad(this->region()->config.fill_infill_angle.value);
         //insert the test angle, could do safety tests here?
         f->meta_angle = Geometry::deg2rad(this->region()->config.fill_meta_angle.value);
         f->meta_h = this->region()->config.fill_meta_h;

@@ -250,6 +250,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionBool                external_perimeters_first;
     ConfigOptionBool                extra_perimeters;
     ConfigOptionFloat               fill_angle;
+    ConfigOptionFloat               fill_infill_angle;
     ConfigOptionPercent             fill_density;
     ConfigOptionFloat               fill_meta_angle;
     ConfigOptionFloat               fill_meta_h;
@@ -296,6 +297,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(external_perimeters_first);
         OPT_PTR(extra_perimeters);
         OPT_PTR(fill_angle);
+        OPT_PTR(fill_infill_angle);
         OPT_PTR(fill_density);
         OPT_PTR(fill_meta_angle);
         OPT_PTR(fill_meta_l);

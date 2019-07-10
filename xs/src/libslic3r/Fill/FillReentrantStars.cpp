@@ -66,6 +66,15 @@ FillReentrantStars::_fill_surface_single(
             // for (size_t i = 0; i < 2; ++ i) {
                 // std::reverse(p.points.begin(), p.points.end()); // turn first half upside down
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
+
+                    // Polyline polyline;
+                    // polyline.points.reserve(this->points.size() + 1);
+                    // for (Points::const_iterator it = this->points.begin() + index; it != this->points.end(); ++it)
+                    //     polyline.points.push_back(*it);
+                    // for (Points::const_iterator it = this->points.begin(); it != this->points.begin() + index + 1; ++it)
+                    //     polyline.points.push_back(*it);
+                    // return polyline;
+
                     // printf("loop!");
                     Polygon p1;
                     p1.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
