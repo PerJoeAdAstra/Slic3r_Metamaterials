@@ -61,7 +61,7 @@ FillReentrantHex::_fill_surface_single(
             Polygon p;
             coord_t ax[2] = { x + m.x_offset, x + m.w - m.x_offset };
             for (size_t i = 0; i < 2; ++ i) {
-                std::reverse(p.points.begin(), p.points.end()); // turn first half upside down
+                std::reverse(p.points.begin(), p.points.end()); // reverse first set of points on polygon
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += - m.y_short + m.hex_side - m.y_short + m.hex_side) {
                     p.points.push_back(Point(ax[1], y + m.y_offset));
                     p.points.push_back(Point(ax[0], y - m.y_short - m.y_offset));
@@ -74,7 +74,7 @@ FillReentrantHex::_fill_surface_single(
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.w;
             }
-            p.rotate(this->angle, m.hex_center);
+            p.rotate(-this->angle, m.hex_center); //p.rotate(-direction.first)
             polygons.push_back(p);
         }
     }

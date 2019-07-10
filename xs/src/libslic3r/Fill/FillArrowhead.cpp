@@ -71,7 +71,7 @@ FillArrowhead::_fill_surface_single(
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.w;
             }
-            p.rotate(this->angle, m.hex_center);
+            p.rotate(-this->angle, m.hex_center);
             polygons.push_back(p);
         }
     }

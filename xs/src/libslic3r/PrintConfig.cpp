@@ -476,7 +476,7 @@ PrintConfigDef::PrintConfigDef()
     def->cli = "fill-angle=i";
     def->min = 0;
     def->max = 359;
-    def->default_value = new ConfigOptionFloat(45);
+    def->default_value = new ConfigOptionFloat(0);
 
     def = this->add("fill_density", coPercent);
     def->gui_type = "f_enum_open";
