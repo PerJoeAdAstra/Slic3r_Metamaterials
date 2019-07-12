@@ -88,6 +88,12 @@ src/libslic3r/Fill/FillPlanePath.cpp
 src/libslic3r/Fill/FillPlanePath.hpp
 src/libslic3r/Fill/FillRectilinear.cpp
 src/libslic3r/Fill/FillRectilinear.hpp
+src/libslic3r/Fill/FillArrowhead.cpp
+src/libslic3r/Fill/FillArrowhead.hpp
+src/libslic3r/Fill/FillReentrantHex.cpp
+src/libslic3r/Fill/FillReentrantHex.hpp
+src/libslic3r/Fill/FillReentrantStars.cpp
+src/libslic3r/Fill/FillReentrantStars.hpp
 src/libslic3r/Flow.cpp
 src/libslic3r/Flow.hpp
 src/libslic3r/GCode.cpp
