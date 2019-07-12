@@ -31,16 +31,16 @@ FillReentrantStars::_fill_surface_single(
         m.hex_center        = Point(m.hex_width/2, m.hex_side);
 
 
-        m.starOffset = this->meta_l;
-        m.starHeight = this->meta_h;
+        m.starOffset = m.distance * this->meta_l/8;
+        m.starHeight = m.distance * this->meta_h/2;
 
-        m.in_short = this->meta_l * sin(Geometry::deg2rad(30));
-        m.in_long = this->meta_l * cos(Geometry::deg2rad(30));
+        m.in_short = m.starOffset * sin(Geometry::deg2rad(30));
+        m.in_long = m.starOffset * cos(Geometry::deg2rad(30));
 
-        m.out_long = this->meta_h * cos(Geometry::deg2rad(30));
-        m.out_short = this->meta_h * sin(Geometry::deg2rad(30));
-
+        m.out_long = m.starHeight * cos(Geometry::deg2rad(30));
+        m.out_short = m.starHeight * sin(Geometry::deg2rad(30));
     }
+
     CacheData &m = it_m->second;
 
     Polylines polylines;
@@ -62,102 +62,68 @@ FillReentrantStars::_fill_surface_single(
         }
         for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
             coord_t ax[2] = { x + m.x_offset, x + m.distance - m.x_offset };
-            // for (size_t i = 0; i < 2; ++ i) {
-                // std::reverse(p.points.begin(), p.points.end()); // turn first half upside down
+            for (coord_t i = 1; i > -2; i -= 2) {
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
-                    /*
-                    Polyline polyline;
-                    polyline.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
-                    // p.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.y_offset));
-                    polyline.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.y_offset));
-
-                    // p.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side + m.y_offset));
-                    polyline.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side + m.y_offset));
-                    // polyline.rotate(0, m.hex_center);
-                    polylines.push_back(polyline);
-                    */
+                    //first star
                     Polyline p;
-                    p.points.push_back(Point(ax[1], y + m.y_offset));
-                    p.points.push_back(Point(ax[0], y + m.y_short - m.y_offset));
-                    p.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
+                    p.points.push_back(Point(ax[1], y - m.starOffset));
+                    p.points.push_back(Point(ax[1] - (i * m.out_long), y - m.out_short));
+                    p.points.push_back(Point(ax[1] - (i * m.in_long), y + m.in_short));
+                    p.points.push_back(Point(ax[1], y + m.starHeight));
+                    if(i==-1){
+                      std::reverse(p.points.begin(), p.points.end());
+                    }
                     polylines.push_back(p);
 
                     Polyline p1;
-                    p1.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
-                    p1.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.y_offset));
-                    p1.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side + m.y_offset));
+                    p1.points.push_back(Point(ax[1] - (i * m.in_long), y + m.in_short));
+                    //second star
+                    p1.points.push_back(Point(ax[0] + (i * m.in_long), y + m.y_short - m.in_short));
+                    p1.points.push_back(Point(ax[0], y + m.y_short - m.starHeight));
+                    if(i == -1){
+                      std::reverse(p1.points.begin(), p1.points.end());
+                    }
                     polylines.push_back(p1);
-                    /*
-                    Point point = Point(ax[1], y + m.y_offset)
-                    p.points.push_back(Point(ax[1], y + m.y_offset));
 
-                    p.points.push_back(Point(ax[0], y + m.y_short - m.y_offset));
+                    Polyline p2;
+                    p2.points.push_back(Point(ax[0] + (i * m.in_long), y + m.y_short - m.in_short));
+                    p2.points.push_back(Point(ax[0] + (i * m.out_long), y + m.y_short + m.out_short));
+                    p2.points.push_back(Point(ax[0], y + m.y_short + m.starOffset));
+                    //Third star
+                    p2.points.push_back(Point(ax[0], y + m.y_short + m.hex_side - m.starOffset ));
+                    p2.points.push_back(Point(ax[0] + (i * m.out_long), y + m.y_short + m.hex_side - m.out_short));
+                    p2.points.push_back(Point(ax[0] + (i * m.in_long), y + m.y_short + m.hex_side + m.in_short));
+                    p2.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.starHeight));
+                    if(i == -1){
+                      std::reverse(p2.points.begin(), p2.points.end());
+                    }
+                    polylines.push_back(p2);
 
-                    p.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
+                    Polyline p3;
+                    p3.points.push_back(Point(ax[0] + (i * m.in_long), y + m.y_short + m.hex_side + m.in_short));
+                    p3.points.push_back(Point(ax[1] - (i * m.in_long), y + m.y_short + m.hex_side + m.y_short - m.in_long));
+                    //Fourth star
+                    p3.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.starHeight));
+                    if(i == -1){
+                      std::reverse(p3.points.begin(), p3.points.end());
+                    }
+                    polylines.push_back(p3);
 
-                    p.rotate(0, m.hex_center);
-                    polygons.push_back(p); //<- a polygon of points
-
-
-                    Point point = Point(ax[1], y);
-                    //p.points.push_back(Point(ax[1], y + m.y_offset));
-                    p.points.push_back((point.x, point.y - m.starOffset));           //#1
-                    p.points.push_back((point.x - m.out_long, point.y - m.out_short));   //#2
-                    p.points.push_back((point.x - m.in_long, point.y + m.in_short));     //#3
-                    p.points.push_back((point.x, point.y + m.starHeight));           //#4
-                    p.rotate(0, m.hex_center);
-                    polygons.push_back(p);
-                    Polygon p1;                                                       //gap?
-                    p1.points.push_back((point.x - m.in_long, point.y + m.in_short));     //#5
-
-                    point = Point(ax[0], y);
-                    //p.points.push_back(Point(ax[0], y + m.y_short - m.y_offset));
-                    p1.points.push_back((point.x + m.in_long, point.y - m.in_short));
-                    p1.points.push_back((point.x, point.y - m.starHeight));
-                    p1.rotate(0, m.hex_center);
-                    polygons.push_back(p1);
-                    Polygon p2;
-                    p2.points.push_back((point.x + m.in_long, point.y - m.in_short));
-                    p2.points.push_back((point.x + m.out_long, point.y + m.out_short));
-                    p2.points.push_back((point.x, point.y + m.starOffset));
-
-                    point = Point(ax[0], y + m.y_short + m.hex_side + m.y_offset);
-                    //p.points.push_back(Point(ax[0], y + m.y_short + m.hex_side + m.y_offset));
-                    p2.points.push_back((point.x, point.y - m.starOffset));
-                    p2.points.push_back((point.x + m.out_long, point.y - m.out_short));
-                    p2.points.push_back((point.x + m.in_long, point.y + m.in_short));
-                    p2.points.push_back((point.x, point.y + m.starHeight));
-                    p2.rotate(0, m.hex_center);
-                    polygons.push_back(p2);
-                    Polygon p3;
-                    p3.points.push_back((point.x + m.in_long, point.y + m.in_short));
-
-                    point = Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.y_offset);
-                    //p.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short - m.y_offset));
-                    p3.points.push_back((point.x - m.in_long, point.y - m.in_short));
-                    p3.points.push_back((point.x, point.y - m.starHeight));
-                    p3.rotate(0, m.hex_center);
-                    polygons.push_back(p3);
-                    Polygon p4;
-                    p4.points.push_back((point.x - m.in_long, point.y - m.in_short));
-                    p4.points.push_back((point.x - m.out_long, point.y + m.out_short));
-                    p4.points.push_back((point.x, point.y + m.in_short));
-
-
-                    //p.push_back(Point[ax[1], y + m.y_short + m.hex_side + m.y_short + (m.hex_side)])
-                    //p.rotate(0, m.hex_center);
-                    p4.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side + m.y_offset - m.in_short));
-                    p4.rotate(0, m.hex_center);
-
-                    //polygons.push_back(p); //<- a polygon of points
-                    polygons.push_back(p);
-                    */
+                    Polyline p4;
+                    p4.points.push_back(Point(ax[1] - (i * m.in_long), y + m.y_short + m.hex_side + m.y_short - m.in_long));
+                    p4.points.push_back(Point(ax[1] - (i * m.out_long), y + m.y_short + m.hex_side + m.y_short + m.out_long));
+                    p4.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.starOffset));
+                    p4.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side - m.starOffset));
+                    if(i == -1){
+                      std::reverse(p4.points.begin(), p4.points.end());
+                    }
+                    polylines.push_back(p4);
                 }
-                // ax[0] = ax[0] + m.distance;
-                // ax[1] = ax[1] + m.distance;
-                // std::swap(ax[0], ax[1]); // draw symmetrical pattern
+                ax[0] = ax[0] + m.distance;
+                ax[1] = ax[1] + m.distance;
+                std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.distance;
-            // }
+            }
         }
     }
 
@@ -166,7 +132,6 @@ FillReentrantStars::_fill_surface_single(
         // in this case we don't try to make more continuous paths
         printf("Something went wrong!?\n");
     } else {
-        // printf("Processing as paths\n");
         // consider polygons as polylines without re-appending the initial point:
         // this cuts the last segment on purpose, so that the jump to the next
         // path is more straight

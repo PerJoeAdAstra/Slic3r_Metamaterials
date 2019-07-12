@@ -72,29 +72,11 @@ Polygon::split_at_index(int index) const
     return polyline;
 }
 
-Polyline
-Polygon::split_at_index_no_loop(int index) const
-{
-    Polyline polyline;
-    polyline.points.reserve(this->points.size());
-    for (Points::const_iterator it = this->points.begin() + index; it != this->points.end(); ++it)
-        polyline.points.push_back(*it);
-    for (Points::const_iterator it = this->points.begin(); it != this->points.begin() + index; ++it)
-        polyline.points.push_back(*it);
-    return polyline;
-}
-
 // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
 Polyline
 Polygon::split_at_first_point() const
 {
     return this->split_at_index(0);
-}
-
-Polyline
-Polygon::split_at_first_point_no_loop() const
-{
-    return this->split_at_index_no_loop(0);
 }
 
 Points

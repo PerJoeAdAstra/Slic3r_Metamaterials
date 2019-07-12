@@ -32,11 +32,6 @@ class Polygon : public MultiPoint {
     // Split a closed polygon into an open polyline, with the split point duplicated at both ends.
     Polyline split_at_first_point() const;
 
-    //split an open polygon into an open polyline with no duplication of points.
-    Polyline split_at_index_no_loop(int index) const;
-    Polyline split_at_first_point_no_loop() const;
-
-
     Points equally_spaced_points(double distance) const;
     double area() const;
     bool is_counter_clockwise() const;
