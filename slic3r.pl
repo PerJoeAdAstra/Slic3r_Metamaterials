@@ -476,6 +476,8 @@ $j
     --fill-meta-angle   angle (theta) in degrees from 0-30 of the metamaterial pattern (default: 10)
     --fill-meta-h       h (often height) parameter of a metamaterial shape (default: 1)
     --fill-meta-l       l (often width) parameter of a metamaterial shape (default: 1)
+    --fill-infill-angle  angle in degrees from 0-359 of the infill direction. 
+                        Unlike the fill direction this does not affect cross hatching. (default 0)
 
    Quality options (slower slicing):
     --extra-perimeters  Add more perimeters when needed (default: yes)
