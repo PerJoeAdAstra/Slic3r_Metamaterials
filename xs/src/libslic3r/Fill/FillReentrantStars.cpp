@@ -52,7 +52,7 @@ FillReentrantStars::_fill_surface_single(
         {
             // rotate bounding box according to infill direction
             Polygon bb_polygon = bounding_box.polygon();
-            bb_polygon.rotate(0, m.hex_center);
+            bb_polygon.rotate(0, m.hex_center); //bb_polygon.rotate(this->infill_angle, m.hex_center);
             bounding_box = bb_polygon.bounding_box();
 
             // extend bounding box so that our pattern will be aligned with other layers
@@ -111,7 +111,7 @@ FillReentrantStars::_fill_surface_single(
 
                     Polyline p4;
                     p4.points.push_back(Point(ax[1] - (i * m.in_long), y + m.y_short + m.hex_side + m.y_short - m.in_long));
-                    p4.points.push_back(Point(ax[1] - (i * m.out_long), y + m.y_short + m.hex_side + m.y_short + m.out_long));
+                    p4.points.push_back(Point(ax[1] - (i * m.out_long), y + m.y_short + m.hex_side + m.y_short + m.out_short));
                     p4.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.starOffset));
                     p4.points.push_back(Point(ax[1], y + m.y_short + m.hex_side + m.y_short + m.hex_side - m.starOffset));
                     if(i == -1){
