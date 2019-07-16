@@ -65,12 +65,13 @@ public:
     bool        complete;
 
     //For Metamaterials
-    //angle in radians of
     float       meta_angle;
 
     float       meta_h;
 
     float       meta_l;
+
+    std::string      filename;
 
 public:
     static Fill* new_from_type(const InfillPattern type);

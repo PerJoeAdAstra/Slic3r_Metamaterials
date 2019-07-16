@@ -18,6 +18,7 @@
 #include "FillReentrantHex.hpp"
 #include "FillArrowhead.hpp"
 #include "FillReentrantStars.hpp"
+#include "FillCustom.hpp"
 
 namespace Slic3r {
 
@@ -45,6 +46,7 @@ Fill::new_from_type(const InfillPattern type)
         case ipReentrantHex:        return new FillReentrantHex();
         case ipArrowhead:           return new FillArrowhead();
         case ipReentrantStars:      return new FillReentrantStars();
+        case ipCustom:              return new FillCustom();
 
         default: CONFESS("unknown type"); return NULL;
     }
