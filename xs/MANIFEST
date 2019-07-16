@@ -94,6 +94,8 @@ src/libslic3r/Fill/FillReentrantHex.cpp
 src/libslic3r/Fill/FillReentrantHex.hpp
 src/libslic3r/Fill/FillReentrantStars.cpp
 src/libslic3r/Fill/FillReentrantStars.hpp
+src/libslic3r/Fill/FillCustom.hpp
+src/libslic3r/Fill/FillCustom.hpp
 src/libslic3r/Flow.cpp
 src/libslic3r/Flow.hpp
 src/libslic3r/GCode.cpp
