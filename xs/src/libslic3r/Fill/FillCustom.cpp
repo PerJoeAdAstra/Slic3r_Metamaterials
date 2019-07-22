@@ -83,7 +83,7 @@ FillCustom::_fill_surface_single(
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
 
-        m.distance          = min_spacing / this->density; //used as scaling factor
+        m.distance          = (min_spacing / this->density)/10; //used as scaling factor
 
         m.pattern           = scaleFromOrigin(fileToPattern("test.txt"), m.distance);
         // printf(this->filename);
