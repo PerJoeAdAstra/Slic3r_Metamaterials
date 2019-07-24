@@ -85,7 +85,7 @@ FillCustom::_fill_surface_single(
 
         m.distance          = (min_spacing / this->density)/10; //used as scaling factor
 
-        m.pattern           = scaleFromOrigin(fileToPattern("test.txt"), m.distance);
+        m.pattern           = scaleFromOrigin(fileToPattern("infill.txt"), m.distance);
         // printf(this->filename);
         m.pattern_width     = calculatePatternWidth(m.pattern);
         m.pattern_height    = calculatePatternHeight(m.pattern);

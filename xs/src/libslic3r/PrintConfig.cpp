@@ -558,6 +558,13 @@ PrintConfigDef::PrintConfigDef()
     def->max = 10;
     def->default_value = new ConfigOptionFloat(1);
 
+    def = this->add("fill_filename", coString);
+    def->label = __TRANS("fill filename");
+    def->category = __TRANS("Infill");
+    def->tooltip = __TRANS("name of the infill pattern file.");
+    def->cli = "fill-filename=s";
+    def->default_value = new ConfigOptionString("test.txt");
+
     def = this->add("fill_gaps", coBool);
     def->label = __TRANS("Fill gaps");
     def->category = __TRANS("Infill");
@@ -587,6 +594,8 @@ PrintConfigDef::PrintConfigDef()
     def->enum_values.push_back("reentranthex");
     def->enum_values.push_back("arrowhead");
     def->enum_values.push_back("reentrantstars");
+    def->enum_values.push_back("custom");
+    // def->enum_values.push_back("biholar");                                   //Biholar is currently broken
     def->enum_labels.push_back(__TRANS("Rectilinear"));
     def->enum_labels.push_back(__TRANS("Aligned Rectilinear"));
     def->enum_labels.push_back(__TRANS("Grid"));
@@ -603,6 +612,8 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back(__TRANS("Reentrant Hex"));
     def->enum_labels.push_back(__TRANS("Arrowhead"));
     def->enum_labels.push_back(__TRANS("Reentrant Stars"));
+    def->enum_labels.push_back(__TRANS("Custom"));
+    // def->enum_labels.push_back(__TRANS("Biholar"));
     def->default_value = new ConfigOptionEnum<InfillPattern>(ipStars);
 
     def = this->add("first_layer_acceleration", coFloat);

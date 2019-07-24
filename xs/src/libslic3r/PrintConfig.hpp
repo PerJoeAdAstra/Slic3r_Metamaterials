@@ -38,7 +38,7 @@ enum InfillPattern {
     ipTriangles, ipStars, ipCubic,
     ipConcentric, ipHoneycomb, ip3DHoneycomb,
     ipGyroid, ipHilbertCurve, ipArchimedeanChords, ipOctagramSpiral,
-    ipReentrantHex, ipArrowhead, ipReentrantStars,
+    ipReentrantHex, ipArrowhead, ipReentrantStars, ipCustom, ipBiholar,
 };
 
 enum SupportMaterialPattern {
@@ -87,7 +87,9 @@ template<> inline t_config_enum_values ConfigOptionEnum<InfillPattern>::get_enum
     keys_map["octagramspiral"]      = ipOctagramSpiral;
     keys_map["reentranthex"]        = ipReentrantHex;
     keys_map["arrowhead"]           = ipArrowhead;
-    keys_map["reentrantstars"]           = ipReentrantStars;
+    keys_map["reentrantstars"]      = ipReentrantStars;
+    keys_map["custom"]              = ipCustom;
+    keys_map["biholar"]             = ipBiholar;
     return keys_map;
 }
 
@@ -255,6 +257,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionFloat               fill_meta_angle;
     ConfigOptionFloat               fill_meta_h;
     ConfigOptionFloat               fill_meta_l;
+    ConfigOptionString              fill_filename;
     ConfigOptionBool                fill_gaps;
     ConfigOptionEnum<InfillPattern> fill_pattern;
     ConfigOptionFloatOrPercent      gap_fill_speed;
