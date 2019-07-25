@@ -63,6 +63,8 @@ FillReentrantHex::_fill_surface_single(
             for (size_t i = 0; i < 2; ++ i) {
                 std::reverse(p.points.begin(), p.points.end()); // reverse first set of points on polygon
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += - m.y_short + m.hex_side - m.y_short + m.hex_side) {
+                    //Works the same as the regular hexagon exept these hexagons
+                    // are reentrant 
                     p.points.push_back(Point(ax[1], y + m.y_offset));
                     p.points.push_back(Point(ax[0], y - m.y_short - m.y_offset));
                     p.points.push_back(Point(ax[0], y - m.y_short + m.hex_side + m.y_offset));

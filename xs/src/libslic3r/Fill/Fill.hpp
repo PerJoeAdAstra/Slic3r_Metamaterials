@@ -65,13 +65,18 @@ public:
     bool        complete;
 
     //For Metamaterials
+    // angle theta involved in the metamaterial patterns
     float       meta_angle;
 
+    //length h involved in the metamaterial patterns
     float       meta_h;
 
+    //length l involved in the metamaterial patterns
     float       meta_l;
 
-    std::string      filename;
+    //Parameter for filename of custom infill pattern. String parsing threw
+    //errors so it is commented out 
+    // std::string      filename;
 
 public:
     static Fill* new_from_type(const InfillPattern type);

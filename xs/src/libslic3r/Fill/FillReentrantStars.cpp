@@ -64,6 +64,10 @@ FillReentrantStars::_fill_surface_single(
             coord_t ax[2] = { x + m.x_offset, x + m.distance - m.x_offset };
             for (coord_t i = 1; i > -2; i -= 2) {
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
+                    //Generates hexagon points then adds the star points around
+                    //them creating a new line whenever a move without extruding
+                    //is needed 
+
                     //first star
                     Polyline p;
                     p.points.push_back(Point(ax[1], y - m.starOffset));

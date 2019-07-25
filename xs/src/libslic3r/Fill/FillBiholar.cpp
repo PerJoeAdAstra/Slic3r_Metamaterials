@@ -29,19 +29,12 @@ namespace Slic3r {
 
         m.distance          = (min_spacing / this->density)/2; //used as scaling factor
 
-        m.w = this->meta_l * m.distance;
-        m.h = this->meta_h * m.distance;
-        m.theta = this->meta_angle;
+        m.offset = this->meta_h * m.distance;
 
-        m.hex_side          = m.w;
-        m.hex_width         = m.w; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
-        coord_t hex_height  = m.hex_side;
-        m.y_short           = m.h;
+        m.side              = this->meta_l * m.distance;
 
-        m.pattern_height    = (2 * m.hex_side) + m.y_short;
-        m.x_offset          = 0;
-        m.y_offset          = 0;
-        m.hex_center        = Point(m.hex_width/2, m.y_short);
+        m.pattern_height    = (2 * m.side) + m.offset;
+        m.pattern_center        = Point(m.pattern_height/2, m.side/2);
       }
       CacheData &m = it_m->second;
 
@@ -84,9 +77,29 @@ namespace Slic3r {
         Polygons inpolygons;
 
         //Add on interior polygons to expolygon and let it run as normal
+        /*
+        The idea here was to generate polygons across the entire interior of the
+        shapes bounding box then to add them to the "holes" member of the
+        exterior polygon. The idea being that the rectilinear pattern would then
+        automatically treat them as holes as testing with shapes with holes in
+        seemed to show it should work.
+        */
+        /*
+        This sort of works. meta l designates the "radius" (side length) of the
+        square and h designates the space between the squares. The plan was to
+        test this with squares then change it to spheres. This however doesn't
+        work as with small values of l it fills the "holes" but with large
+        values it leaves angles gaps roughly l wide. A more thorough approach to
+        adding it to the existing code will probably work better than this
+        hopeful quick hack. This is also weird where it clips the edges as it
+        probably breaks it down into triangles instead of changing the points on
+        the polygon. The clipping I've used here probably isn't designed for
+        this.
+
+        All changes below iside dashes
+        */
         //----------------------------------------------------------------------
-        // adjust actual bounding box to the nearest multiple of our hex pattern
-        // and align it so that it matches across layers
+        // Taken from fill honeycomb
 
         BoundingBox bounding_box1 = expolygon.contour.bounding_box();
         {
@@ -98,16 +111,16 @@ namespace Slic3r {
           // extend bounding box so that our pattern will be aligned with other layers
           // $bounding_box->[X1] and [Y1] represent the displacement between new bounding box offset and old one
           // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
-          bounding_box1.min.align_to_grid(Point(m.hex_width, m.pattern_height));
+          bounding_box1.min.align_to_grid(Point(m.side, m.pattern_height));
         }
 
         for (coord_t x = bounding_box1.min.x; x <= bounding_box1.max.x; ) {
           coord_t ax[2] = { x, x + m.w };
-          for (coord_t y = bounding_box1.min.y; y <= bounding_box1.max.y; y += m.w + m.y_short) {
+          for (coord_t y = bounding_box1.min.y; y <= bounding_box1.max.y; y += m.w + m.offset) {
             Polygon p;
             p.points.push_back(Point(ax[0], y));
-            p.points.push_back(Point(ax[0], y + m.hex_side));
-            p.points.push_back(Point(ax[1], y + m.hex_side));
+            p.points.push_back(Point(ax[0], y + m.side));
+            p.points.push_back(Point(ax[1], y + m.side));
             p.points.push_back(Point(ax[1], y));
             // p.points.push_back(Point(ax[0], y));
             // p.rotate(direction.first, m.hex_center); //p.rotate(-direction.first)
@@ -115,25 +128,13 @@ namespace Slic3r {
           }
           ax[0] = ax[0] + m.w;
           ax[1] = ax[1] + m.w;
-          x += m.w + m.y_short;
+          x += m.w + m.offset;
         }
 
         Polygons polygons_trimmed = intersection((Polygons)expolygon, inpolygons);
         for (Polygons::iterator it = polygons_trimmed.begin(); it != polygons_trimmed.end(); ++ it)
             //Add internal trimmed polygons we want to add as holes to the exterior holes section
             expolygon.holes.push_back(*it);
-
-        /*
-        This sort of works. meta l designates the "radius" (side length) of the
-        square and h designates the space between the squares. The plan was to
-        test this with squares then change it to spheres. This however doesn't
-        work as with small values of l it fills the "holes" but with large
-        values it leaves angles gaps roughly l wide. A more thorough approach to
-        adding it to the existing code will probably work better than this
-        hopeful quick hack. This is also weird where it clips the edges. The
-        clipping I've used here probably isn't designed for this.  
-        */
-        //----------------------------------------------------------------------
 
         // rotate polygons so that we can work with vertical lines here
         expolygon.rotate(-direction.first);

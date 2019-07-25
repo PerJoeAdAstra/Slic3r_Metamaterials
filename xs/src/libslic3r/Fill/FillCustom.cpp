@@ -24,7 +24,7 @@ std::vector<int> parseLine(std::string line){
   return point;
 }
 
-//reads a file of points and returns a vector of all the points
+//reads a file of points and returns a vector of vector points
 std::vector<std::vector<int>> fileToPattern(std::string filename){
   std::vector<std::vector<int>> everyline;
   std::string line;
@@ -40,6 +40,7 @@ std::vector<std::vector<int>> fileToPattern(std::string filename){
   return everyline;
 }
 
+//takes in a vector of vector points and scales them by a scale factor
 std::vector<std::vector<int>> scaleFromOrigin(std::vector<std::vector<int>> pattern, int scale){
   std::vector<std::vector<int>> scaled_pattern;
   for(int i = 0; i < pattern.size(); i++){
@@ -75,7 +76,7 @@ FillCustom::_fill_surface_single(
     ExPolygon                       &expolygon,
     Polylines*                      polylines_out)
 {
-    // cache hexagons math
+    // cache shape
     CacheID cache_id = std::make_pair(this->density, this->min_spacing);
     Cache::iterator it_m = this->cache.find(cache_id);
     if (it_m == this->cache.end()) {
@@ -85,15 +86,17 @@ FillCustom::_fill_surface_single(
 
         m.distance          = (min_spacing / this->density)/10; //used as scaling factor
 
-        m.pattern           = scaleFromOrigin(fileToPattern("infill.txt"), m.distance);
+        // caches the entire pattern
+        m.pattern           = scaleFromOrigin(fileToPattern("infill.txt"), m.distance); // fileToPattern(this->filename) Broken?
+
         // printf(this->filename);
         m.pattern_width     = calculatePatternWidth(m.pattern);
         m.pattern_height    = calculatePatternHeight(m.pattern);
 
 
-        m.x_offset          = 0;
+        m.x_offset          = 0; //no x or y offset implemented
         m.y_offset          = 0;
-        m.hex_center        = Point(m.pattern_width/2, m.pattern_height/2); //(m.hex_width/2, m.hex_side)
+        m.pattern_center    = Point(m.pattern_width/2, m.pattern_height/2); //(m.hex_width/2, m.hex_side)
     }
     CacheData &m = it_m->second;
 
@@ -106,7 +109,7 @@ FillCustom::_fill_surface_single(
         {
             // rotate bounding box according to infill direction
             Polygon bb_polygon = bounding_box.polygon();
-            bb_polygon.rotate(this->infill_angle, m.hex_center);
+            bb_polygon.rotate(this->infill_angle, m.pattern_center);
             bounding_box = bb_polygon.bounding_box();
 
             // extend bounding box so that our pattern will be aligned with other layers
@@ -123,14 +126,14 @@ FillCustom::_fill_surface_single(
             int i = 0;
             while(i < m.pattern.size())
             {
-              Polyline polyline;
-              if (addpoint) {
-                polyline.points.push_back(Point(m.pattern[i][1] + x, m.pattern[i][2] + y));
-                i++;
+              Polyline polyline; //create a new polyline
+              if (addpoint) {                                                                 //as we've incremented the pointer we need to add this
+                polyline.points.push_back(Point(m.pattern[i][1] + x, m.pattern[i][2] + y));   // point if there is a new polyline as we skipped adding
+                i++;                                                                          //it at the end of the last loop
               }
 
-              while(i < m.pattern.size() && m.pattern[i][0] != 0)
-              {
+              while(i < m.pattern.size() && m.pattern[i][0] != 0)                             //read and add points until there is a "no draw" point
+              {                                                                               //or its the end of the file
                 polyline.points.push_back(Point(m.pattern[i][1] + x, m.pattern[i][2] + y));
                 i++;
               }
@@ -139,10 +142,6 @@ FillCustom::_fill_surface_single(
             }
           }
         }
-
-
-      // for (size_t i = 0; i < 2; ++ i) {
-      //     std::reverse(p.points.begin(), p.points.end()); // reverse first set of points on polygon
     }
 
     if (true) {

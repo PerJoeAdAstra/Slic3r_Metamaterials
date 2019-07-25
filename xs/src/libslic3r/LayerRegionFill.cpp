@@ -239,7 +239,7 @@ LayerRegion::make_fill()
         f->meta_angle = Geometry::deg2rad(this->region()->config.fill_meta_angle.value);
         f->meta_h = this->region()->config.fill_meta_h;
         f->meta_l = this->region()->config.fill_meta_l;
-        f->filename = this->region()->config.fill_filename;
+        // f->filename = this->region()->config.fill_filename; // String parsing broken so commented out
 
 
         // Maximum length of the perimeter segment linking two infill lines.

@@ -44,6 +44,7 @@ Fill::new_from_type(const InfillPattern type)
         case ipHilbertCurve:        return new FillHilbertCurve();
         case ipOctagramSpiral:      return new FillOctagramSpiral();
 
+        //Added metamaterial patterns
         case ipReentrantHex:        return new FillReentrantHex();
         case ipArrowhead:           return new FillArrowhead();
         case ipReentrantStars:      return new FillReentrantStars();
