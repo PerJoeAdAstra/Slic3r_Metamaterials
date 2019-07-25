@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="16.545725mm"
+   height="22.870832mm"
+   viewBox="0 0 16.545725 22.870832"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="91.014852"
-     inkscape:cy="1032.3278"
+     inkscape:cx="77.6091"
+     inkscape:cy="42.28213"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -40,7 +40,9 @@
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
-       id="grid10" />
+       id="grid10"
+       originx="-3.5469386"
+       originy="-261.94958" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -50,14 +52,15 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-3.5469385,-12.179585)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.53090429px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.06327261"
@@ -125,7 +128,7 @@
          style="stroke-width:0.06861925">h</tspan><tspan
          sodipodi:role="line"
          x="3.2989979"
-         y="27.223249"
+         y="27.223251"
          style="stroke-width:0.06861925"
          id="tspan3759" /></text>
     <path
