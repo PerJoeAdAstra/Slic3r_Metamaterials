@@ -19,7 +19,7 @@
 #include "FillArrowhead.hpp"
 #include "FillReentrantStars.hpp"
 #include "FillCustom.hpp"
-#include "FillBiholar.hpp"
+// #include "FillBiholar.hpp"
 
 namespace Slic3r {
 
@@ -49,7 +49,7 @@ Fill::new_from_type(const InfillPattern type)
         case ipArrowhead:           return new FillArrowhead();
         case ipReentrantStars:      return new FillReentrantStars();
         case ipCustom:              return new FillCustom();
-        case ipBiholar:             return new FillBiholar();
+        // case ipBiholar:             return new FillBiholar();
 
         default: CONFESS("unknown type"); return NULL;
     }
