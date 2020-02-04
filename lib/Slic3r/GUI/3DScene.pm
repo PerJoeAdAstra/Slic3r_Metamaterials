@@ -1331,8 +1331,7 @@ sub load_object {
         my $volume = $model_object->volumes->[$volume_idx];
         foreach my $instance_idx (@$instance_idxs) {
             my $instance = $model_object->instances->[$instance_idx];
-            my $mesh = $volume->mesh->clone;
-            $instance->transform_mesh($mesh);
+            my $mesh = $volume->get_transformed_mesh($instance);
             
             my $color_idx;
             if ($self->color_by eq 'volume') {
