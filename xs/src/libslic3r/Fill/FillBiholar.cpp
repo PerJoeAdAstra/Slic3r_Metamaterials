@@ -26,15 +26,18 @@ namespace Slic3r {
         it_m = this->cache.insert(it_m, std::pair<CacheID,CacheData>(cache_id, CacheData()));
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
-
-        m.distance          = (min_spacing / this->density)/2; //used as scaling factor
-
-        m.offset = this->meta_h * m.distance;
-
-        m.side              = this->meta_l * m.distance;
-
-        m.pattern_height    = (2 * m.side) + m.offset;
-        m.pattern_center        = Point(m.pattern_height/2, m.side/2);
+        if(this->meta_isMM){
+          m.distance          = 1; //used as scaling
+          m.r1 = scale_(this->meta_r1);
+          m.r2 = scale_(this->meta_r2);
+          m.w = scale_(this->meta_h);
+        }
+        else{
+          m.distance          = (min_spacing / this->density); //used as scaling
+          m.r1                = this->meta_r1 * m.distance;
+          m.r2                = this->meta_r2 * m.distance * 2;
+          m.w                 = this->meta_h * m.distance;
+        }
       }
       CacheData &m = it_m->second;
 
@@ -69,72 +72,60 @@ namespace Slic3r {
       typedef std::map<coord_t,IntersectionPoint> vertical_t; // <y,point>
       typedef std::map<coord_t,vertical_t>        grid_t;     // <x,<y,point>>
 
-      printf("expolygon hole size, %d\n", expolygon.holes.size());
+      /*
+      The idea here was to generate polygons across the entire interior of the
+      shapes bounding box then to add them to the "holes" member of the
+      exterior polygon. The idea being that the rectilinear pattern would then
+      automatically treat them as holes and factor them into the rectilinear
+      path generation.
+      */
+
+      BoundingBox bounding_box1 = expolygon.contour.bounding_box();
+      ExPolygon inpolygons;
+
+      for (coord_t x = 0; (x*m.w) + bounding_box1.min.x + m.r2 + coord_t(0.5*m.w) + line_spacing <= bounding_box1.max.x; x++ ) {
+        for (coord_t y = 0; (y*m.w) + bounding_box1.min.y + m.r2 + coord_t(0.5*m.w) + line_spacing <= bounding_box1.max.y; y++) {
+
+          Polygon p;
+          //generate circular points to add to polygon
+
+          float angle_step = 2*M_PI/36;
+          float radius;
+          if((x + y)%2) radius = m.r1;
+          else radius = m.r2;
+
+          coord_t xCenter = (x*m.w) + bounding_box1.min.x + coord_t(0.5*m.w);
+          coord_t yCenter = (y*m.w) + bounding_box1.min.y + coord_t(0.5*m.w);
+          for(float i = 2*M_PI; i >= 0; i-= angle_step){ // This is adding the same point 3 times!
+            coord_t x1 = xCenter + coord_t(radius * cos( i ));
+            coord_t y1 = yCenter + coord_t(radius * sin( i ));
+            p.points.push_back(Point(x1,y1));
+          }
+
+          inpolygons.holes.push_back(p);
+        }
+      }
+
+      //TODO: Clip polygons
+
+      //copy across interior holes
+      polygons_append(expolygon.holes, inpolygons.holes);
 
       grid_t grid;
       {
 
-        Polygons inpolygons;
 
-        //Add on interior polygons to expolygon and let it run as normal
-        /*
-        The idea here was to generate polygons across the entire interior of the
-        shapes bounding box then to add them to the "holes" member of the
-        exterior polygon. The idea being that the rectilinear pattern would then
-        automatically treat them as holes as testing with shapes with holes in
-        seemed to show it should work.
-        */
-        /*
-        This sort of works. meta l designates the "radius" (side length) of the
-        square and h designates the space between the squares. The plan was to
-        test this with squares then change it to spheres. This however doesn't
-        work as with small values of l it fills the "holes" but with large
-        values it leaves angles gaps roughly l wide. A more thorough approach to
-        adding it to the existing code will probably work better than this
-        hopeful quick hack. This is also weird where it clips the edges as it
-        probably breaks it down into triangles instead of changing the points on
-        the polygon. The clipping I've used here probably isn't designed for
-        this.
-
-        All changes below iside dashes
-        */
-        //----------------------------------------------------------------------
-        // Taken from fill honeycomb
-
-        BoundingBox bounding_box1 = expolygon.contour.bounding_box();
         {
           // rotate bounding box according to infill direction
           Polygon bb_polygon = bounding_box1.polygon();
-          // bb_polygon.rotate(direction.first, m.hex_center);
+          //bb_polygon.rotate(direction.first, m.hex_center);
           bounding_box1 = bb_polygon.bounding_box();
 
           // extend bounding box so that our pattern will be aligned with other layers
           // $bounding_box->[X1] and [Y1] represent the displacement between new bounding box offset and old one
           // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
-          bounding_box1.min.align_to_grid(Point(m.side, m.pattern_height));
+          //bounding_box1.min.align_to_grid(Point(m.side, m.pattern_height));
         }
-
-        for (coord_t x = bounding_box1.min.x; x <= bounding_box1.max.x; ) {
-          coord_t ax[2] = { x, x + m.w };
-          for (coord_t y = bounding_box1.min.y; y <= bounding_box1.max.y; y += m.w + m.offset) {
-            Polygon p;
-            p.points.push_back(Point(ax[0], y));
-            p.points.push_back(Point(ax[0], y + m.side));
-            p.points.push_back(Point(ax[1], y + m.side));
-            p.points.push_back(Point(ax[1], y));
-            // p.points.push_back(Point(ax[0], y));
-            // p.rotate(direction.first, m.hex_center); //p.rotate(-direction.first)
-            inpolygons.push_back(p);
-          }
-          ax[0] = ax[0] + m.w;
-          ax[1] = ax[1] + m.w;
-          x += m.w + m.offset;
-        }
-
-        Polygons polygons_trimmed = intersection((Polygons)expolygon, inpolygons);
-        for (Polygons::iterator it = polygons_trimmed.begin(); it != polygons_trimmed.end(); ++ it)
-            //Add internal trimmed polygons we want to add as holes to the exterior holes section
-            expolygon.holes.push_back(*it);
 
         // rotate polygons so that we can work with vertical lines here
         expolygon.rotate(-direction.first);
@@ -175,13 +166,9 @@ namespace Slic3r {
         // Whenever between two intersection points we find vertices of the original polygon,
         // store them in the 'skipped' member of the latter point.
 
-        // ---------------------------------------------------------------------
         const Polygons polygons = expolygon;
-        printf("expolygon holes size, %d\n", expolygon.holes.size());
-        printf("Polygon cast size, %d\n", polygons.size());
 
-        printf("---\n");
-        for (Polygons::const_iterator polygon = polygons.begin(); polygon != polygons.end(); ++polygon) {
+        for (Polygons::const_iterator polygon = polygons.begin(); polygon != polygons.end(); ++polygon) { //TODO <- check this goes through all polygons?
           const Points &points = polygon->points;
 
           // This vector holds the original polygon vertices found after the last intersection

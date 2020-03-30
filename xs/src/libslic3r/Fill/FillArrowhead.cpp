@@ -20,21 +20,32 @@ FillArrowhead::_fill_surface_single(
         it_m = this->cache.insert(it_m, std::pair<CacheID,CacheData>(cache_id, CacheData()));
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
+        if(this->meta_isMM){
+          m.distance          = min_spacing / this->density; //used as scaling factor
 
-        m.distance          = min_spacing / this->density; //used as scaling factor
+          m.w = scale_(this->meta_l/2.0);
+          m.h = scale_(this->meta_h);
+          m.theta = scale_(this->meta_angle);
 
-        m.w = this->meta_l * m.distance;
-        m.h = this->meta_h * m.distance;
-        m.theta = this->meta_angle;
+          m.y_short           = m.w * tan(m.theta);
+          m.hex_width         = m.w * 2;
+          m.pattern_height    = m.h;
+          m.hex_center        = Point(m.w, m.h/2);
+        }
+        else{
+          m.distance          = min_spacing / this->density; //used as scaling factor
 
-        m.y_short           = m.w * tan(m.theta);
+          m.w = this->meta_l * m.distance /2.0;
+          m.h = this->meta_h * m.distance;
+          m.theta = this->meta_angle;
+
+          m.y_short           = m.w * tan(m.theta);
 
 
-        m.hex_width         = m.w * 2;
-        m.pattern_height    = m.h;
-        m.x_offset          = 0;
-        m.y_offset          = 0;
-        m.hex_center        = Point(m.w/2, m.h/2);
+          m.hex_width         = m.w * 2;
+          m.pattern_height    = m.h;
+          m.hex_center        = Point(m.w, m.h/2);
+        }
     }
     CacheData &m = it_m->second;
 
@@ -58,7 +69,7 @@ FillArrowhead::_fill_surface_single(
 
         for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
             Polygon p;
-            coord_t ax[2] = { x + m.x_offset, x + m.w - m.x_offset };
+            coord_t ax[2] = { x, x + m.w };
             for (size_t i = 0; i < 2; ++ i) {
                 std::reverse(p.points.begin(), p.points.end());
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.h) {

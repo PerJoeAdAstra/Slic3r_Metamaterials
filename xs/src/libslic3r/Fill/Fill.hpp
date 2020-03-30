@@ -74,8 +74,17 @@ public:
     //length l involved in the metamaterial patterns
     float       meta_l;
 
+    //length h involved in the metamaterial patterns
+    float       meta_r1;
+
+    //length l involved in the metamaterial patterns
+    float       meta_r2;
+
+    //boolean for defining if the L and h values are defined in mm or as a ratio
+    bool        meta_isMM;
+
     //Parameter for filename of custom infill pattern. String parsing threw
-    //errors so it is commented out 
+    //errors so it is commented out
     // std::string      filename;
 
 public:
@@ -118,7 +127,8 @@ protected:
         _spacing(0.f),
         meta_angle(0),
         meta_h(0),
-        meta_l(0)
+        meta_l(0),
+        meta_isMM(false)
         {};
 
     typedef std::pair<float, Point> direction_t;

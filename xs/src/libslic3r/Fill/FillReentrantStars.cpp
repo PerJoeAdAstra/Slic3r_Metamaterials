@@ -20,19 +20,29 @@ FillReentrantStars::_fill_surface_single(
         it_m = this->cache.insert(it_m, std::pair<CacheID,CacheData>(cache_id, CacheData()));
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
-        m.distance          = min_spacing / this->density;
-        m.hex_side          = m.distance / (sqrt(3)/2);
-        m.hex_width         = m.distance * 2; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
+        if(this->meta_isMM){
+          m.distance          = scale_(this->meta_l);
+          m.hex_side          = (m.distance / (sqrt(3)/2));
+          m.hex_width         = (m.distance * 2);
+          m.y_short           = (m.distance * sqrt(3)/3);
+
+          m.starOffset = scale_(this->meta_r1);
+          m.starHeight = scale_(this->meta_r2);
+        }
+        else{
+          m.distance          = min_spacing * meta_l / this->density;
+          m.hex_side          = m.distance / (sqrt(3)/2);
+          m.hex_width         = m.distance * 2;
+          m.y_short           = m.distance * sqrt(3)/3;
+
+          m.starOffset = m.distance * this->meta_r1;
+          m.starHeight = m.distance * this->meta_r2;
+        }
+
         coord_t hex_height  = m.hex_side * 2;
         m.pattern_height    = hex_height + m.hex_side;
-        m.y_short           = m.distance * sqrt(3)/3;
-        m.x_offset          = 0;
-        m.y_offset          = 0;
+
         m.hex_center        = Point(m.hex_width/2, m.hex_side);
-
-
-        m.starOffset = m.distance * this->meta_l/8;
-        m.starHeight = m.distance * this->meta_h/2;
 
         m.in_short = m.starOffset * sin(Geometry::deg2rad(30));
         m.in_long = m.starOffset * cos(Geometry::deg2rad(30));
@@ -52,7 +62,7 @@ FillReentrantStars::_fill_surface_single(
         {
             // rotate bounding box according to infill direction
             Polygon bb_polygon = bounding_box.polygon();
-            bb_polygon.rotate(0, m.hex_center); //bb_polygon.rotate(this->infill_angle, m.hex_center);
+            bb_polygon.rotate(0, m.hex_center);
             bounding_box = bb_polygon.bounding_box();
 
             // extend bounding box so that our pattern will be aligned with other layers
@@ -61,12 +71,12 @@ FillReentrantStars::_fill_surface_single(
             bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
         }
         for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
-            coord_t ax[2] = { x + m.x_offset, x + m.distance - m.x_offset };
+            coord_t ax[2] = { x, x + m.distance };
             for (coord_t i = 1; i > -2; i -= 2) {
                 for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
                     //Generates hexagon points then adds the star points around
                     //them creating a new line whenever a move without extruding
-                    //is needed 
+                    //is needed
 
                     //first star
                     Polyline p;

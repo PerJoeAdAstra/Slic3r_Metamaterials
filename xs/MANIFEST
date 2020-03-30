@@ -78,6 +78,8 @@ src/libslic3r/Fill/Fill.cpp
 src/libslic3r/Fill/Fill.hpp
 src/libslic3r/Fill/Fill3DHoneycomb.cpp
 src/libslic3r/Fill/Fill3DHoneycomb.hpp
+src/libslic3r/Fill/FillBiholar.cpp
+src/libslic3r/Fill/FillBiholar.hpp
 src/libslic3r/Fill/FillConcentric.cpp
 src/libslic3r/Fill/FillConcentric.hpp
 src/libslic3r/Fill/FillGyroid.cpp

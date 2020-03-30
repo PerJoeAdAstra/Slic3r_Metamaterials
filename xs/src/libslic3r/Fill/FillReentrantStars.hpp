@@ -31,9 +31,7 @@ protected:
         coord_t hex_width;
         coord_t	pattern_height;
         coord_t y_short;
-        coord_t x_offset;
-        coord_t	y_offset;
-        Point	hex_center;
+        Point	  hex_center;
         coord_t starOffset;
         coord_t starHeight;
         coord_t in_short;

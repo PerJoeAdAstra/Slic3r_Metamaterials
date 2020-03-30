@@ -31,12 +31,9 @@ protected:
         coordf_t theta;
 
         coord_t	distance;
-        coord_t hex_side;
-        coord_t hex_width;
         coord_t	pattern_height;
         coord_t y_short;
         coord_t x_offset;
-        coord_t	y_offset;
         Point	hex_center;
     };
     typedef std::pair<float,coordf_t> CacheID;  // density, spacing

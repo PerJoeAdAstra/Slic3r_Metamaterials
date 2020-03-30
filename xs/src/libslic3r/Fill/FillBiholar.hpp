@@ -27,15 +27,11 @@ protected:
       // Cache the polygon maths.
     	struct CacheData
     	{
-            coord_t h;
-            coord_t w;
-            coordf_t theta;
-
             coord_t	distance;
-            coord_t offset;
-            coord_t side;
-            coord_t	pattern_height;
-            Point	pattern_center;
+
+            coord_t w;
+            coord_t r1;
+            coord_t r2;
         };
         typedef std::pair<float,coordf_t> CacheID;  // density, spacing
         typedef std::map<CacheID, CacheData> Cache;

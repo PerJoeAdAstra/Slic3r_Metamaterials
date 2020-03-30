@@ -20,22 +20,33 @@ FillReentrantHex::_fill_surface_single(
         it_m = this->cache.insert(it_m, std::pair<CacheID,CacheData>(cache_id, CacheData()));
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
+        if(this->meta_isMM){
+          m.distance          = 1; //used as scaling factor
 
-        m.distance          = min_spacing / this->density; //used as scaling factor
+          m.w = scale_(this->meta_l / 2);
+          m.h = scale_(this->meta_h);
+          m.theta = this->meta_angle;
+          m.y_short           = m.w * tan(m.theta);
+          m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
+          //TODO: Add offset settings!
+          m.x_offset          = min_spacing / 2;
 
-        m.w = this->meta_l * m.distance;
-        m.h = this->meta_h * m.distance;
-        m.theta = this->meta_angle;
+          m.hex_center        = Point(m.w/2, m.h);
+        }
+        else
+        {
+          m.distance          = min_spacing / this->density; //used as scaling factor
 
-        m.hex_side          = m.h;
-        m.hex_width         = m.w * 2; // $m->{hex_width} == $m->{hex_side} * sqrt(3);
-        coord_t hex_height  = m.hex_side;
-        m.y_short           = m.w * tan(m.theta);
+          m.w = (this->meta_l * m.distance) / 2;
+          m.h = this->meta_h * m.distance;
+          m.theta = this->meta_angle;
+          m.y_short           = m.w * tan(m.theta);
+          m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
+          //TODO: Add offset settings!
+          m.x_offset          = min_spacing / 2;
 
-        m.pattern_height    = m.hex_side + (m.hex_side - (2 * -m.y_short));
-        m.x_offset          = min_spacing / 2;
-        m.y_offset          = 0;
-        m.hex_center        = Point(m.hex_width/2, m.hex_side);
+          m.hex_center        = Point(m.w, m.h);
+        }
     }
     CacheData &m = it_m->second;
 
@@ -54,7 +65,7 @@ FillReentrantHex::_fill_surface_single(
             // extend bounding box so that our pattern will be aligned with other layers
             // $bounding_box->[X1] and [Y1] represent the displacement between new bounding box offset and old one
             // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
-            bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
+            bounding_box.min.align_to_grid(Point(m.w, m.pattern_height));
         }
 
         for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
@@ -62,21 +73,21 @@ FillReentrantHex::_fill_surface_single(
             coord_t ax[2] = { x + m.x_offset, x + m.w - m.x_offset };
             for (size_t i = 0; i < 2; ++ i) {
                 std::reverse(p.points.begin(), p.points.end()); // reverse first set of points on polygon
-                for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += - m.y_short + m.hex_side - m.y_short + m.hex_side) {
+                for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += - m.y_short + m.h - m.y_short + m.h) {
                     //Works the same as the regular hexagon exept these hexagons
-                    // are reentrant 
-                    p.points.push_back(Point(ax[1], y + m.y_offset));
-                    p.points.push_back(Point(ax[0], y - m.y_short - m.y_offset));
-                    p.points.push_back(Point(ax[0], y - m.y_short + m.hex_side + m.y_offset));
-                    p.points.push_back(Point(ax[1], y - m.y_short + m.hex_side - m.y_short - m.y_offset));
-                    p.points.push_back(Point(ax[1], y - m.y_short + m.hex_side - m.y_short + m.hex_side + m.y_offset));
+                    // are reentrant
+                    p.points.push_back(Point(ax[1], y));
+                    p.points.push_back(Point(ax[0], y - m.y_short));
+                    p.points.push_back(Point(ax[0], y - m.y_short + m.h));
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short));
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short + m.h));
                 }
                 ax[0] = ax[0] + m.w;
                 ax[1] = ax[1] + m.w;
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.w;
             }
-            p.rotate(-this->infill_angle, m.hex_center); //p.rotate(-direction.first)
+            p.rotate(-this->infill_angle, m.hex_center);
             polygons.push_back(p);
         }
     }
@@ -110,7 +121,7 @@ FillReentrantHex::_fill_surface_single(
                 if (!paths.empty()) {
                     // distance between first point of this path and last point of last path
                     double distance = paths.back().last_point().distance_to(it_path->first_point());
-                    if (distance <= m.hex_width) {
+                    if (distance <= m.w) {
                         paths.back().points.insert(paths.back().points.end(), it_path->points.begin(), it_path->points.end());
                         continue;
                     }

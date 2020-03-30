@@ -239,6 +239,9 @@ LayerRegion::make_fill()
         f->meta_angle = Geometry::deg2rad(this->region()->config.fill_meta_angle.value);
         f->meta_h = this->region()->config.fill_meta_h;
         f->meta_l = this->region()->config.fill_meta_l;
+        f->meta_r1 = this->region()->config.fill_meta_r1;
+        f->meta_r2 = this->region()->config.fill_meta_r2;
+        f->meta_isMM = this->region()->config.fill_meta_isMM;
         // f->filename = this->region()->config.fill_filename; // String parsing broken so commented out
 
 

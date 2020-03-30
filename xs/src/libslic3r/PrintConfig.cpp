@@ -486,6 +486,8 @@ PrintConfigDef::PrintConfigDef()
 
     def = this->add("fill_infill_angle", coFloat);
     def->label = __TRANS("infill angle");
+    def->gui_type = "f_enum_open";
+    def->gui_flags = "show_value";
     def->category = __TRANS("Infill");
     def->tooltip = __TRANS("Default base angle for infill orientation.");
     def->sidetext = "°";
@@ -534,9 +536,16 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back("100%");
     def->default_value = new ConfigOptionPercent(20);
 
+    def = this->add("texture_test", coBool);
+    def->label = __TRANS("Texture test");
+    def->category = __TRANS("Texutres");
+    def->tooltip = __TRANS("A test value to reduce extrusion speed to zero.");
+    def->cli = "texture-test!";
+    def->default_value = new ConfigOptionBool(false);
+
     def = this->add("fill_meta_angle", coFloat);
     def->label = __TRANS("Fill meta angle");
-    def->category = __TRANS("Infill");
+    def->category = __TRANS("Meta-Infill");
     def->tooltip = __TRANS("Angle (theta) of a metamaterial pattern.");
     def->sidetext = "°";
     def->cli = "fill-meta-angle=f";
@@ -545,8 +554,8 @@ PrintConfigDef::PrintConfigDef()
     def->default_value = new ConfigOptionFloat(10);
 
     def = this->add("fill_meta_h", coFloat);
-    def->label = __TRANS("Fill meta height");
-    def->category = __TRANS("Infill");
+    def->label = __TRANS("Fill meta h");
+    def->category = __TRANS("Meta-Infill");
     def->tooltip = __TRANS("Height of a metamaterial pattern.");
     def->sidetext = "";
     def->cli = "fill-meta-h=f";
@@ -556,7 +565,7 @@ PrintConfigDef::PrintConfigDef()
 
     def = this->add("fill_meta_l", coFloat);
     def->label = __TRANS("Fill meta l");
-    def->category = __TRANS("Infill");
+    def->category = __TRANS("Meta-Infill");
     def->tooltip = __TRANS("l value of a metamaterial pattern.");
     def->sidetext = "";
     def->cli = "fill-meta-l=f";
@@ -564,9 +573,37 @@ PrintConfigDef::PrintConfigDef()
     def->max = 10;
     def->default_value = new ConfigOptionFloat(1);
 
+    def = this->add("fill_meta_r1", coFloat);
+    def->label = __TRANS("Fill meta r1");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("Raduis of the first circle.");
+    def->sidetext = "";
+    def->cli = "fill-meta-r1=f";
+    def->min = 0;
+    def->max = 10;
+    def->default_value = new ConfigOptionFloat(1);
+
+    def = this->add("fill_meta_r2", coFloat);
+    def->label = __TRANS("Fill meta r2");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("raduis of the larger circle.");
+    def->sidetext = "";
+    def->cli = "fill-meta-r2=f";
+    def->min = 0;
+    def->max = 10;
+    def->default_value = new ConfigOptionFloat(5);
+
+    def = this->add("fill_meta_isMM", coBool);
+    def->label = __TRANS("is in MM? ");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("If true, l and h values are taken as mm and the infill ratio does not affect them. Otherwise treated as a ratio scaled by the infill pattern.");
+    def->sidetext = "";
+    def->cli = "fill-meta-isMM!";
+    def->default_value = new ConfigOptionBool(false);
+
     def = this->add("fill_filename", coString);
     def->label = __TRANS("fill filename");
-    def->category = __TRANS("Infill");
+    def->category = __TRANS("Meta-Infill");
     def->tooltip = __TRANS("name of the infill pattern file.");
     def->cli = "fill-filename=s";
     def->default_value = new ConfigOptionString("test.txt");
@@ -601,7 +638,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_values.push_back("arrowhead");
     def->enum_values.push_back("reentrantstars");
     def->enum_values.push_back("custom");
-    // def->enum_values.push_back("biholar");                                   //Biholar is currently broken
+    def->enum_values.push_back("biholar");
     def->enum_labels.push_back(__TRANS("Rectilinear"));
     def->enum_labels.push_back(__TRANS("Aligned Rectilinear"));
     def->enum_labels.push_back(__TRANS("Grid"));
@@ -619,7 +656,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back(__TRANS("Arrowhead"));
     def->enum_labels.push_back(__TRANS("Reentrant Stars"));
     def->enum_labels.push_back(__TRANS("Custom"));
-    // def->enum_labels.push_back(__TRANS("Biholar"));
+    def->enum_labels.push_back(__TRANS("Biholar"));
     def->default_value = new ConfigOptionEnum<InfillPattern>(ipStars);
 
     def = this->add("first_layer_acceleration", coFloat);
