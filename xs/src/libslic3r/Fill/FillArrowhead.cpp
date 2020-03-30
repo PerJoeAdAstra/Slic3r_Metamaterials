@@ -26,11 +26,6 @@ FillArrowhead::_fill_surface_single(
           m.w = scale_(this->meta_l/2.0);
           m.h = scale_(this->meta_h);
           m.theta = scale_(this->meta_angle);
-
-          m.y_short           = m.w * tan(m.theta);
-          m.hex_width         = m.w * 2;
-          m.pattern_height    = m.h;
-          m.hex_center        = Point(m.w, m.h/2);
         }
         else{
           m.distance          = min_spacing / this->density; //used as scaling factor
@@ -38,14 +33,14 @@ FillArrowhead::_fill_surface_single(
           m.w = this->meta_l * m.distance /2.0;
           m.h = this->meta_h * m.distance;
           m.theta = this->meta_angle;
-
-          m.y_short           = m.w * tan(m.theta);
-
-
-          m.hex_width         = m.w * 2;
-          m.pattern_height    = m.h;
-          m.hex_center        = Point(m.w, m.h/2);
         }
+        m.y_short           = m.w * tan(m.theta);
+        m.hex_width         = m.w * 2;
+        m.pattern_height    = m.h;
+        m.hex_center        = Point(m.w, m.h/2);
+
+        m.x_offset           = scale_(this->x_offset);
+        m.y_offset           = scale_(this->y_offset);
     }
     CacheData &m = it_m->second;
 
@@ -67,12 +62,12 @@ FillArrowhead::_fill_surface_single(
             bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
         }
 
-        for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
+        for (coord_t x = bounding_box.min.x - m.x_offset; x <= bounding_box.max.x; ) {
             Polygon p;
             coord_t ax[2] = { x, x + m.w };
             for (size_t i = 0; i < 2; ++ i) {
                 std::reverse(p.points.begin(), p.points.end());
-                for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.h) {
+                for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += m.h) {
                     p.points.push_back(Point(ax[1], y));
                     p.points.push_back(Point(ax[0], y - m.y_short));
                     p.points.push_back(Point(ax[1], y + m.h));

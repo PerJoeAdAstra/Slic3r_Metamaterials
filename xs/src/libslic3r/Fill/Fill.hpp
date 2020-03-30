@@ -83,6 +83,12 @@ public:
     //boolean for defining if the L and h values are defined in mm or as a ratio
     bool        meta_isMM;
 
+    //x_offset, the horizontal offset of the meta pattern in mm
+    float       x_offset;
+
+    //y_offset, the vertical offste of the meta pattern in mm
+    float       y_offset;
+
     //Parameter for filename of custom infill pattern. String parsing threw
     //errors so it is commented out
     // std::string      filename;

@@ -586,7 +586,7 @@ PrintConfigDef::PrintConfigDef()
     def = this->add("fill_meta_r2", coFloat);
     def->label = __TRANS("Fill meta r2");
     def->category = __TRANS("Meta-Infill");
-    def->tooltip = __TRANS("raduis of the larger circle.");
+    def->tooltip = __TRANS("Raduis of the second circle.");
     def->sidetext = "";
     def->cli = "fill-meta-r2=f";
     def->min = 0;
@@ -594,12 +594,32 @@ PrintConfigDef::PrintConfigDef()
     def->default_value = new ConfigOptionFloat(5);
 
     def = this->add("fill_meta_isMM", coBool);
-    def->label = __TRANS("is in MM? ");
+    def->label = __TRANS("is in mm?");
     def->category = __TRANS("Meta-Infill");
-    def->tooltip = __TRANS("If true, l and h values are taken as mm and the infill ratio does not affect them. Otherwise treated as a ratio scaled by the infill pattern.");
+    def->tooltip = __TRANS("If true, l and h values are taken as millimeters and the infill ratio does not affect them. Otherwise treated as a ratio scaled by the infill pattern.");
     def->sidetext = "";
     def->cli = "fill-meta-isMM!";
     def->default_value = new ConfigOptionBool(false);
+
+    def = this->add("fill_meta_x_offset", coFloat);
+    def->label = __TRANS("Horizontal Offset");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("The horizontal offset of the pattern in mm, values will move the pattern to the left. If left at zero the pattern start is taken as the leftmost point of the model.");
+    def->sidetext = "mm";
+    def->cli = "fill-meta-x-offset=f";
+    def->min = 0;
+    def->max = 10;
+    def->default_value = new ConfigOptionFloat(0);
+
+    def = this->add("fill_meta_y_offset", coFloat);
+    def->label = __TRANS("Vertical Offset");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("The Vertical offset of the pattern in mm, values will move the pattern down. If left at zero the pattern start is taken as the leftmost point of the model.");
+    def->sidetext = "mm";
+    def->cli = "fill-meta-y-offset=f";
+    def->min = 0;
+    def->max = 10;
+    def->default_value = new ConfigOptionFloat(0);
 
     def = this->add("fill_filename", coString);
     def->label = __TRANS("fill filename");

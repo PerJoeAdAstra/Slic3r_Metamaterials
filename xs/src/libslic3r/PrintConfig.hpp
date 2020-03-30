@@ -172,6 +172,8 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionFloat               fill_meta_r1;
     ConfigOptionFloat               fill_meta_r2;
     ConfigOptionBool                fill_meta_isMM;
+    ConfigOptionFloat               fill_meta_x_offset;
+    ConfigOptionFloat               fill_meta_y_offset;
     ConfigOptionFloatOrPercent      first_layer_height;
     ConfigOptionBool                infill_only_where_needed;
     ConfigOptionBool                interface_shells;
@@ -268,6 +270,8 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionFloat               fill_meta_r1;
     ConfigOptionFloat               fill_meta_r2;
     ConfigOptionBool                fill_meta_isMM;
+    ConfigOptionFloat               fill_meta_x_offset;
+    ConfigOptionFloat               fill_meta_y_offset;
     ConfigOptionString              fill_filename;
     ConfigOptionBool                fill_gaps;
     ConfigOptionEnum<InfillPattern> fill_pattern;
@@ -320,6 +324,8 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(fill_meta_r1);
         OPT_PTR(fill_meta_r2);
         OPT_PTR(fill_meta_isMM);
+        OPT_PTR(fill_meta_x_offset);
+        OPT_PTR(fill_meta_y_offset);
         OPT_PTR(fill_gaps);
         OPT_PTR(fill_pattern);
         OPT_PTR(gap_fill_speed);

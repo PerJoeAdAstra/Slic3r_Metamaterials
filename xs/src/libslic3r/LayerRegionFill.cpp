@@ -242,6 +242,8 @@ LayerRegion::make_fill()
         f->meta_r1 = this->region()->config.fill_meta_r1;
         f->meta_r2 = this->region()->config.fill_meta_r2;
         f->meta_isMM = this->region()->config.fill_meta_isMM;
+        f->x_offset = this->region()->config.fill_meta_x_offset;
+        f->y_offset = this->region()->config.fill_meta_y_offset;
         // f->filename = this->region()->config.fill_filename; // String parsing broken so commented out
 
 

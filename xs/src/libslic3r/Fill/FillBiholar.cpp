@@ -38,6 +38,9 @@ namespace Slic3r {
           m.r2                = this->meta_r2 * m.distance * 2;
           m.w                 = this->meta_h * m.distance;
         }
+
+        m.x_offset           = scale_(this->x_offset);
+        m.y_offset           = scale_(this->y_offset);
       }
       CacheData &m = it_m->second;
 

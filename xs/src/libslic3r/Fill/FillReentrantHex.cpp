@@ -21,32 +21,25 @@ FillReentrantHex::_fill_surface_single(
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
         if(this->meta_isMM){
-          m.distance          = 1; //used as scaling factor
-
-          m.w = scale_(this->meta_l / 2);
-          m.h = scale_(this->meta_h);
-          m.theta = this->meta_angle;
-          m.y_short           = m.w * tan(m.theta);
-          m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
-          //TODO: Add offset settings!
-          m.x_offset          = min_spacing / 2;
-
-          m.hex_center        = Point(m.w/2, m.h);
+          m.distance          = 1; //used as scaling
+          m.w                 = scale_(this->meta_l / 2);
+          m.h                 = scale_(this->meta_h);
         }
         else
         {
           m.distance          = min_spacing / this->density; //used as scaling factor
-
-          m.w = (this->meta_l * m.distance) / 2;
-          m.h = this->meta_h * m.distance;
-          m.theta = this->meta_angle;
-          m.y_short           = m.w * tan(m.theta);
-          m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
-          //TODO: Add offset settings!
-          m.x_offset          = min_spacing / 2;
-
-          m.hex_center        = Point(m.w, m.h);
+          m.w                 = (this->meta_l * m.distance) / 2;
+          m.h                 = this->meta_h * m.distance;
         }
+        m.theta = this->meta_angle;
+        m.y_short           = m.w * tan(m.theta);
+        m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
+        m.x_offset          = min_spacing / 2;
+
+        m.hex_center        = Point(m.w/2, m.h);
+
+        m.x_pattern_offset          = scale_(this->x_offset);
+        m.y_offset          = scale_(this->y_offset);
     }
     CacheData &m = it_m->second;
 
@@ -68,12 +61,12 @@ FillReentrantHex::_fill_surface_single(
             bounding_box.min.align_to_grid(Point(m.w, m.pattern_height));
         }
 
-        for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
+        for (coord_t x = bounding_box.min.x - m.x_pattern_offset; x <= bounding_box.max.x; ) {
             Polygon p;
             coord_t ax[2] = { x + m.x_offset, x + m.w - m.x_offset };
             for (size_t i = 0; i < 2; ++ i) {
                 std::reverse(p.points.begin(), p.points.end()); // reverse first set of points on polygon
-                for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += - m.y_short + m.h - m.y_short + m.h) {
+                for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += - m.y_short + m.h - m.y_short + m.h) {
                     //Works the same as the regular hexagon exept these hexagons
                     // are reentrant
                     p.points.push_back(Point(ax[1], y));

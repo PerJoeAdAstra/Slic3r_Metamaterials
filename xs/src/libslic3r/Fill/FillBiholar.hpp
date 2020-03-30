@@ -32,6 +32,9 @@ protected:
             coord_t w;
             coord_t r1;
             coord_t r2;
+
+            coord_t x_offset;
+            coord_t y_offset;
         };
         typedef std::pair<float,coordf_t> CacheID;  // density, spacing
         typedef std::map<CacheID, CacheData> Cache;

@@ -22,22 +22,18 @@ FillReentrantStars::_fill_surface_single(
         coord_t min_spacing = scale_(this->min_spacing);
         if(this->meta_isMM){
           m.distance          = scale_(this->meta_l);
-          m.hex_side          = (m.distance / (sqrt(3)/2));
-          m.hex_width         = (m.distance * 2);
-          m.y_short           = (m.distance * sqrt(3)/3);
-
           m.starOffset = scale_(this->meta_r1);
           m.starHeight = scale_(this->meta_r2);
         }
         else{
           m.distance          = min_spacing * meta_l / this->density;
-          m.hex_side          = m.distance / (sqrt(3)/2);
-          m.hex_width         = m.distance * 2;
-          m.y_short           = m.distance * sqrt(3)/3;
-
-          m.starOffset = m.distance * this->meta_r1;
-          m.starHeight = m.distance * this->meta_r2;
+          m.starOffset        = m.distance * this->meta_r1;
+          m.starHeight        = m.distance * this->meta_r2;
         }
+
+        m.hex_side          = (m.distance / (sqrt(3)/2));
+        m.hex_width         = (m.distance * 2);
+        m.y_short           = (m.distance * sqrt(3)/3);
 
         coord_t hex_height  = m.hex_side * 2;
         m.pattern_height    = hex_height + m.hex_side;
@@ -49,6 +45,10 @@ FillReentrantStars::_fill_surface_single(
 
         m.out_long = m.starHeight * cos(Geometry::deg2rad(30));
         m.out_short = m.starHeight * sin(Geometry::deg2rad(30));
+
+
+        m.x_offset = scale_(this->x_offset);
+        m.y_offset = scale_(this->y_offset);
     }
 
     CacheData &m = it_m->second;
@@ -70,10 +70,10 @@ FillReentrantStars::_fill_surface_single(
             // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
             bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
         }
-        for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; ) {
+        for (coord_t x = bounding_box.min.x - m.x_offset; x <= bounding_box.max.x; ) {
             coord_t ax[2] = { x, x + m.distance };
             for (coord_t i = 1; i > -2; i -= 2) {
-                for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
+                for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
                     //Generates hexagon points then adds the star points around
                     //them creating a new line whenever a move without extruding
                     //is needed
