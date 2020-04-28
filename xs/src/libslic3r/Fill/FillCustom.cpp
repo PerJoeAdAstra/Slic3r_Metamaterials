@@ -49,6 +49,40 @@ std::vector<std::vector<int>> scaleFromOrigin(std::vector<std::vector<int>> patt
   return scaled_pattern;
 }
 
+//takes in a vector of vector points and scales them by a scale factor
+std::vector<std::vector<int>> scaleFromOriginX(std::vector<std::vector<int>> pattern, int scale){
+  std::vector<std::vector<int>> scaled_pattern;
+  for(int i = 0; i < pattern.size(); i++){
+    scaled_pattern.push_back(std::vector<int>{pattern[i][0], int(pattern[i][1] * scale), pattern[i][2]});
+  }
+  return scaled_pattern;
+}
+
+//takes in a vector of vector points and scales them by a scale factor
+std::vector<std::vector<int>> scaleFromOriginY(std::vector<std::vector<int>> pattern, int scale){
+  std::vector<std::vector<int>> scaled_pattern;
+  for(int i = 0; i < pattern.size(); i++){
+    scaled_pattern.push_back(std::vector<int>{pattern[i][0], pattern[i][1], int(pattern[i][2] * scale)});
+  }
+  return scaled_pattern;
+}
+
+//Adjusts the pattern so the bottom left is zero
+std::vector<std::vector<int>> moveCentreToBottomLeft(std::vector<std::vector<int>> pattern){
+  std::vector<std::vector<int>> scaled_pattern;
+  int xmin = INT_MAX;
+  int ymin = INT_MAX;
+  for(int i = 0; i < pattern.size(); i++){
+    if(pattern[i][1] < xmin) xmin = pattern[i][1];
+    if(pattern[i][2] < ymin) ymin = pattern[i][2];
+  }
+
+  for(int i = 0; i < pattern.size(); i++){
+    scaled_pattern.push_back(std::vector<int>{pattern[i][0], pattern[i][1] - xmin, pattern[i][2] - ymin});
+  }
+  return scaled_pattern;
+}
+
 int calculatePatternWidth(std::vector<std::vector<int>> pattern){
   int min = INT_MAX;
   int max = -INT_MAX;
@@ -83,20 +117,26 @@ FillCustom::_fill_surface_single(
         it_m = this->cache.insert(it_m, std::pair<CacheID,CacheData>(cache_id, CacheData()));
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
+        if(this->meta_isMM){
+          m.distance          = 1; //used as scaling
+          m.pattern           = moveCentreToBottomLeft(scaleFromOrigin(fileToPattern(this->filename), scale_(1)));
+        }
+        else{
+          m.distance          = (min_spacing / this->density); //used as scaling
+          m.pattern           = moveCentreToBottomLeft(scaleFromOrigin(fileToPattern(this->filename), m.distance));
+        }
 
         m.distance          = (min_spacing / this->density)/10; //used as scaling factor
 
         // caches the entire pattern
-        m.pattern           = scaleFromOrigin(fileToPattern("infill.txt"), m.distance); // fileToPattern(this->filename) Broken?
-
-        // printf(this->filename);
         m.pattern_width     = calculatePatternWidth(m.pattern);
         m.pattern_height    = calculatePatternHeight(m.pattern);
 
 
-        m.x_offset          = 0; //no x or y offset implemented
-        m.y_offset          = 0;
-        m.pattern_center    = Point(m.pattern_width/2, m.pattern_height/2); //(m.hex_width/2, m.hex_side)
+        m.x_offset = scale_(this->x_offset);
+        m.y_offset = scale_(this->y_offset);
+
+        m.pattern_center    = Point(m.pattern_width/2, m.pattern_height/2);
     }
     CacheData &m = it_m->second;
 
@@ -119,9 +159,9 @@ FillCustom::_fill_surface_single(
         }
 
         //For x in range
-        for (coord_t x = bounding_box.min.x; x <= bounding_box.max.x; x += m.pattern_width) {
+        for (coord_t x = bounding_box.min.x - m.x_offset; x <= bounding_box.max.x; x += m.pattern_width) {
           //For y in range
-          for (coord_t y = bounding_box.min.y; y <= bounding_box.max.y; y += m.pattern_height) {
+          for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += m.pattern_height) {
             bool addpoint = true;
             int i = 0;
             while(i < m.pattern.size())
@@ -137,6 +177,7 @@ FillCustom::_fill_surface_single(
                 polyline.points.push_back(Point(m.pattern[i][1] + x, m.pattern[i][2] + y));
                 i++;
               }
+              // polyline.rotate(-this->infill_angle, m.pattern_center);
               polylines.push_back(polyline);
               addpoint = true;
             }

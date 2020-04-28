@@ -91,7 +91,7 @@ public:
 
     //Parameter for filename of custom infill pattern. String parsing threw
     //errors so it is commented out
-    // std::string      filename;
+    std::string      filename;
 
 public:
     static Fill* new_from_type(const InfillPattern type);

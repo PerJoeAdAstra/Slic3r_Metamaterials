@@ -165,7 +165,6 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionPercent             adaptive_slicing_quality;
     ConfigOptionBool                dont_support_bridges;
     ConfigOptionFloatOrPercent      extrusion_width;
-    ConfigOptionString              fill_filename;
     ConfigOptionFloat               fill_meta_angle;
     ConfigOptionFloat               fill_meta_h;
     ConfigOptionFloat               fill_meta_l;
@@ -174,6 +173,7 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionBool                fill_meta_isMM;
     ConfigOptionFloat               fill_meta_x_offset;
     ConfigOptionFloat               fill_meta_y_offset;
+    ConfigOptionString              fill_filename;
     ConfigOptionFloatOrPercent      first_layer_height;
     ConfigOptionBool                infill_only_where_needed;
     ConfigOptionBool                interface_shells;
@@ -326,6 +326,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(fill_meta_isMM);
         OPT_PTR(fill_meta_x_offset);
         OPT_PTR(fill_meta_y_offset);
+        OPT_PTR(fill_filename);
         OPT_PTR(fill_gaps);
         OPT_PTR(fill_pattern);
         OPT_PTR(gap_fill_speed);
