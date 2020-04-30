@@ -201,7 +201,6 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionFloat               support_material_spacing;
     ConfigOptionFloat               support_material_speed;
     ConfigOptionFloatOrPercent      support_material_threshold;
-    ConfigOptionBool                texture_test;
     ConfigOptionFloat               xy_size_compensation;
     ConfigOptionInt                 sequential_print_priority;
 
@@ -294,7 +293,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionFloatOrPercent      solid_infill_extrusion_width;
     ConfigOptionInt                 solid_infill_every_layers;
     ConfigOptionFloatOrPercent      solid_infill_speed;
-    ConfigOptionBool                texture_test;
+    ConfigOptionBool                force_infill_retraction;
     ConfigOptionBool                thin_walls;
     ConfigOptionFloatOrPercent      top_infill_extrusion_width;
     ConfigOptionEnum<InfillPattern> top_infill_pattern;
@@ -347,7 +346,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(solid_infill_extrusion_width);
         OPT_PTR(solid_infill_every_layers);
         OPT_PTR(solid_infill_speed);
-        OPT_PTR(texture_test);
+        OPT_PTR(force_infill_retraction);
         OPT_PTR(thin_walls);
         OPT_PTR(top_infill_extrusion_width);
         OPT_PTR(top_infill_pattern);

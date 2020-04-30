@@ -536,11 +536,11 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back("100%");
     def->default_value = new ConfigOptionPercent(20);
 
-    def = this->add("texture_test", coBool);
-    def->label = __TRANS("Texture test");
-    def->category = __TRANS("Texutres");
-    def->tooltip = __TRANS("A test value to reduce extrusion speed to zero.");
-    def->cli = "texture-test!";
+    def = this->add("force_infill_retraction", coBool);
+    def->label = __TRANS("Force infill retraction");
+    def->category = __TRANS("Meta-Infill");
+    def->tooltip = __TRANS("Forces retraction on the interior pattern, reduces interior stringing. *Warning* if using flexible fillament, may cause under-extrusion");
+    def->cli = "force-interior-retraction!";
     def->default_value = new ConfigOptionBool(false);
 
     def = this->add("fill_meta_angle", coFloat);
