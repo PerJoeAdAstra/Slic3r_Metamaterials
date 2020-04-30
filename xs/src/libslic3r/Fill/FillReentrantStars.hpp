@@ -26,7 +26,8 @@ protected:
 	// Cache the hexagon math.
 	struct CacheData
 	{
-		coord_t	distance;
+		    coord_t	distance;
+        coord_t hex_scale;
         coord_t hex_side;
         coord_t hex_width;
         coord_t	pattern_height;

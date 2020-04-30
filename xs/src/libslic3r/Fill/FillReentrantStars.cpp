@@ -21,19 +21,22 @@ FillReentrantStars::_fill_surface_single(
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
         if(this->meta_isMM){
-          m.distance          = scale_(this->meta_l);
-          m.starOffset = scale_(this->meta_r1);
-          m.starHeight = scale_(this->meta_r2);
+          m.hex_scale         = scale_(this->meta_l);
+          m.starOffset        = scale_(this->meta_r1);
+          m.starHeight        = scale_(this->meta_r2);
         }
         else{
-          m.distance          = min_spacing * meta_l / this->density;
+          m.distance          = min_spacing / this->density;
+          m.hex_scale         = m.distance * this->meta_l;
           m.starOffset        = m.distance * this->meta_r1;
           m.starHeight        = m.distance * this->meta_r2;
         }
 
-        m.hex_side          = (m.distance / (sqrt(3)/2));
-        m.hex_width         = (m.distance * 2);
-        m.y_short           = (m.distance * sqrt(3)/3);
+        std::cout << "m.distance: " << m.distance << ", m.hex_scale: " << m.hex_scale << std::endl;
+
+        m.hex_side          = (m.hex_scale / (sqrt(3)/2));
+        m.hex_width         = (m.hex_scale * 2);
+        m.y_short           = (m.hex_scale * sqrt(3)/3);
 
         coord_t hex_height  = m.hex_side * 2;
         m.pattern_height    = hex_height + m.hex_side;
@@ -71,7 +74,7 @@ FillReentrantStars::_fill_surface_single(
             bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
         }
         for (coord_t x = bounding_box.min.x - m.x_offset; x <= bounding_box.max.x; ) {
-            coord_t ax[2] = { x, x + m.distance };
+            coord_t ax[2] = { x, x + m.hex_scale };
             for (coord_t i = 1; i > -2; i -= 2) {
                 for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += m.y_short + m.hex_side + m.y_short + m.hex_side) {
                     //Generates hexagon points then adds the star points around
@@ -133,10 +136,10 @@ FillReentrantStars::_fill_surface_single(
                     }
                     polylines.push_back(p4);
                 }
-                ax[0] = ax[0] + m.distance;
-                ax[1] = ax[1] + m.distance;
+                ax[0] = ax[0] + m.hex_scale;
+                ax[1] = ax[1] + m.hex_scale;
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
-                x += m.distance;
+                x += m.hex_scale;
             }
         }
     }
