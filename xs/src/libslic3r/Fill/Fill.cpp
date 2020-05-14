@@ -16,6 +16,7 @@
 #include "FillRectilinear.hpp"
 
 #include "FillReentrantHex.hpp"
+#include "FillReentrantHex2.hpp"
 #include "FillArrowhead.hpp"
 #include "FillReentrantStars.hpp"
 #include "FillCustom.hpp"
@@ -46,6 +47,7 @@ Fill::new_from_type(const InfillPattern type)
 
         //Added metamaterial patterns
         case ipReentrantHex:        return new FillReentrantHex();
+        case ipReentrantHex2:       return new FillReentrantHex2();
         case ipArrowhead:           return new FillArrowhead();
         case ipReentrantStars:      return new FillReentrantStars();
         case ipCustom:              return new FillCustom();

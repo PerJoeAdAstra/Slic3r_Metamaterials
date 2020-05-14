@@ -655,6 +655,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_values.push_back("archimedeanchords");
     def->enum_values.push_back("octagramspiral");
     def->enum_values.push_back("reentranthex");
+    def->enum_values.push_back("reentranthex2");
     def->enum_values.push_back("arrowhead");
     def->enum_values.push_back("reentrantstars");
     def->enum_values.push_back("custom");
@@ -673,6 +674,7 @@ PrintConfigDef::PrintConfigDef()
     def->enum_labels.push_back(__TRANS("Archimedean Chords"));
     def->enum_labels.push_back(__TRANS("Octagram Spiral"));
     def->enum_labels.push_back(__TRANS("Reentrant Hex"));
+    def->enum_labels.push_back(__TRANS("Reentrant Hex - polylines"));
     def->enum_labels.push_back(__TRANS("Arrowhead"));
     def->enum_labels.push_back(__TRANS("Reentrant Stars"));
     def->enum_labels.push_back(__TRANS("Custom"));
