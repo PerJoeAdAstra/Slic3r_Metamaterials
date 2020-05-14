@@ -32,6 +32,8 @@ protected:
             coord_t w;
             coord_t r1;
             coord_t r2;
+            
+            coord_t r;
 
             coord_t x_offset;
             coord_t y_offset;
