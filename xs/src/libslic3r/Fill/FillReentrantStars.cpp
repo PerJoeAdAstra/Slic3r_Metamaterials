@@ -32,7 +32,7 @@ FillReentrantStars::_fill_surface_single(
           m.starHeight        = m.distance * this->meta_r2;
         }
 
-        std::cout << "m.distance: " << m.distance << ", m.hex_scale: " << m.hex_scale << std::endl;
+        // std::cout << "m.distance: " << m.distance << ", m.hex_scale: " << m.hex_scale << std::endl;
 
         m.hex_side          = (m.hex_scale / (sqrt(3)/2));
         m.hex_width         = (m.hex_scale * 2);
