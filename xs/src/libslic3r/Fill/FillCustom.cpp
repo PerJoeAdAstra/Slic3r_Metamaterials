@@ -41,7 +41,7 @@ std::vector<std::vector<int>> fileToPattern(std::string filename){
 }
 
 //takes in a vector of vector points and scales them by a scale factor
-std::vector<std::vector<int>> scaleFromOrigin(std::vector<std::vector<int>> pattern, int scale){
+std::vector<std::vector<int>> scaleFromOrigin(std::vector<std::vector<int>> pattern, float scale){
   std::vector<std::vector<int>> scaled_pattern;
   for(int i = 0; i < pattern.size(); i++){
     scaled_pattern.push_back(std::vector<int>{pattern[i][0], int(pattern[i][1] * scale), int(pattern[i][2] * scale)});
@@ -122,11 +122,11 @@ FillCustom::_fill_surface_single(
           m.pattern           = moveCentreToBottomLeft(scaleFromOrigin(fileToPattern(this->filename), scale_(1)));
         }
         else{
-          m.distance          = (min_spacing / this->density); //used as scaling
+          m.distance          = (min_spacing / this->density)/10.f; //used as scaling
           m.pattern           = moveCentreToBottomLeft(scaleFromOrigin(fileToPattern(this->filename), m.distance));
         }
 
-        m.distance          = (min_spacing / this->density)/10; //used as scaling factor
+        // m.distance          = (min_spacing / this->density); //used as scaling factor
 
         // caches the entire pattern
         m.pattern_width     = calculatePatternWidth(m.pattern);
