@@ -25,7 +25,7 @@ FillArrowhead::_fill_surface_single(
 
           m.w = scale_(this->meta_l/2.0);
           m.h = scale_(this->meta_h);
-          m.theta = scale_(this->meta_angle);
+          m.theta = this->meta_angle;
         }
         else{
           m.distance          = min_spacing / this->density; //used as scaling factor
