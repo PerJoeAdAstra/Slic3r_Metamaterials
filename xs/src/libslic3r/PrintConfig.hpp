@@ -38,7 +38,7 @@ enum InfillPattern {
     ipTriangles, ipStars, ipCubic,
     ipConcentric, ipHoneycomb, ip3DHoneycomb,
     ipGyroid, ipHilbertCurve, ipArchimedeanChords, ipOctagramSpiral,
-    ipReentrantHex, ipArrowhead, ipReentrantStars, ipCustom, ipBiholar,
+    ipReentrantHex, ipReentrantHex2,  ipArrowhead, ipReentrantStars, ipCustom, ipBiholar,
 };
 
 enum SupportMaterialPattern {
@@ -86,6 +86,7 @@ template<> inline t_config_enum_values ConfigOptionEnum<InfillPattern>::get_enum
     keys_map["archimedeanchords"]   = ipArchimedeanChords;
     keys_map["octagramspiral"]      = ipOctagramSpiral;
     keys_map["reentranthex"]        = ipReentrantHex;
+    keys_map["reentranthex2"]        = ipReentrantHex2;
     keys_map["arrowhead"]           = ipArrowhead;
     keys_map["reentrantstars"]      = ipReentrantStars;
     keys_map["custom"]              = ipCustom;
@@ -165,7 +166,6 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionPercent             adaptive_slicing_quality;
     ConfigOptionBool                dont_support_bridges;
     ConfigOptionFloatOrPercent      extrusion_width;
-    ConfigOptionString              fill_filename;
     ConfigOptionFloat               fill_meta_angle;
     ConfigOptionFloat               fill_meta_h;
     ConfigOptionFloat               fill_meta_l;
@@ -174,6 +174,7 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionBool                fill_meta_isMM;
     ConfigOptionFloat               fill_meta_x_offset;
     ConfigOptionFloat               fill_meta_y_offset;
+    ConfigOptionString              fill_filename;
     ConfigOptionFloatOrPercent      first_layer_height;
     ConfigOptionBool                infill_only_where_needed;
     ConfigOptionBool                interface_shells;
@@ -201,7 +202,6 @@ class PrintObjectConfig : public virtual StaticPrintConfig
     ConfigOptionFloat               support_material_spacing;
     ConfigOptionFloat               support_material_speed;
     ConfigOptionFloatOrPercent      support_material_threshold;
-    ConfigOptionBool                texture_test;
     ConfigOptionFloat               xy_size_compensation;
     ConfigOptionInt                 sequential_print_priority;
 
@@ -294,7 +294,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
     ConfigOptionFloatOrPercent      solid_infill_extrusion_width;
     ConfigOptionInt                 solid_infill_every_layers;
     ConfigOptionFloatOrPercent      solid_infill_speed;
-    ConfigOptionBool                texture_test;
+    ConfigOptionBool                force_infill_retraction;
     ConfigOptionBool                thin_walls;
     ConfigOptionFloatOrPercent      top_infill_extrusion_width;
     ConfigOptionEnum<InfillPattern> top_infill_pattern;
@@ -326,6 +326,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(fill_meta_isMM);
         OPT_PTR(fill_meta_x_offset);
         OPT_PTR(fill_meta_y_offset);
+        OPT_PTR(fill_filename);
         OPT_PTR(fill_gaps);
         OPT_PTR(fill_pattern);
         OPT_PTR(gap_fill_speed);
@@ -346,7 +347,7 @@ class PrintRegionConfig : public virtual StaticPrintConfig
         OPT_PTR(solid_infill_extrusion_width);
         OPT_PTR(solid_infill_every_layers);
         OPT_PTR(solid_infill_speed);
-        OPT_PTR(texture_test);
+        OPT_PTR(force_infill_retraction);
         OPT_PTR(thin_walls);
         OPT_PTR(top_infill_extrusion_width);
         OPT_PTR(top_infill_pattern);

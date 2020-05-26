@@ -1,4 +1,4 @@
-#include "FillArrowhead.hpp"
+#include "FillReentrantHex2.hpp" 
 #include "../ClipperUtils.hpp"
 #include "../PolylineCollection.hpp"
 #include "../Surface.hpp"
@@ -7,7 +7,7 @@
 namespace Slic3r {
 
 void
-FillArrowhead::_fill_surface_single(
+FillReentrantHex2::_fill_surface_single(
     unsigned int                    thickness_layers,
     const direction_t               &direction,
     ExPolygon                       &expolygon,
@@ -21,30 +21,29 @@ FillArrowhead::_fill_surface_single(
         CacheData &m = it_m->second;
         coord_t min_spacing = scale_(this->min_spacing);
         if(this->meta_isMM){
-          m.distance          = min_spacing / this->density; //used as scaling factor
-
-          m.w = scale_(this->meta_l/2.0);
-          m.h = scale_(this->meta_h);
-          m.theta = this->meta_angle;
+          m.distance          = 1; //used as scaling
+          m.w                 = scale_(this->meta_l / 2);
+          m.h                 = scale_(this->meta_h);
         }
-        else{
+        else
+        {
           m.distance          = min_spacing / this->density; //used as scaling factor
-
-          m.w = this->meta_l * m.distance /2.0;
-          m.h = this->meta_h * m.distance;
-          m.theta = this->meta_angle;
+          m.w                 = (this->meta_l * m.distance) / 2;
+          m.h                 = this->meta_h * m.distance;
         }
+        m.theta = this->meta_angle;
         m.y_short           = m.w * tan(m.theta);
-        m.hex_width         = m.w * 2;
-        m.pattern_height    = m.h;
-        m.hex_center        = Point(m.w, m.h/2);
+        m.pattern_height    = m.h + (m.h - (2 * -m.y_short));
+        m.x_offset          = 0;
 
-        m.x_offset           = scale_(this->x_offset);
-        m.y_offset           = scale_(this->y_offset);
+        m.hex_center        = Point(m.w/2, m.h);
+
+        m.x_pattern_offset          = scale_(this->x_offset);
+        m.y_offset          = scale_(this->y_offset);
     }
     CacheData &m = it_m->second;
 
-    Polygons polygons;
+    Polylines polylines;
     {
         // adjust actual bounding box to the nearest multiple of our hex pattern
         // and align it so that it matches across layers
@@ -59,41 +58,63 @@ FillArrowhead::_fill_surface_single(
             // extend bounding box so that our pattern will be aligned with other layers
             // $bounding_box->[X1] and [Y1] represent the displacement between new bounding box offset and old one
             // The infill is not aligned to the object bounding box, but to a world coordinate system. Supposedly good enough.
-            bounding_box.min.align_to_grid(Point(m.hex_width, m.pattern_height));
+            bounding_box.min.align_to_grid(Point(m.w, m.pattern_height));
         }
 
-        for (coord_t x = bounding_box.min.x - m.x_offset; x <= bounding_box.max.x; ) {
-            Polygon p;
-            coord_t ax[2] = { x, x + m.w };
+        for (coord_t x = bounding_box.min.x - m.x_pattern_offset; x <= bounding_box.max.x; ) {
+            coord_t ax[2] = { x + m.x_offset, x + m.w - m.x_offset };
             for (size_t i = 0; i < 2; ++ i) {
-                std::reverse(p.points.begin(), p.points.end());
-                for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += m.h) {
+                Polyline p;
+                Polylines polylines1;
+                Polylines polylines2;
+                for (coord_t y = bounding_box.min.y - m.y_offset; y <= bounding_box.max.y; y += - m.y_short + m.h - m.y_short + m.h) {
+                  if(i == 0){
                     p.points.push_back(Point(ax[1], y));
                     p.points.push_back(Point(ax[0], y - m.y_short));
-                    p.points.push_back(Point(ax[1], y + m.h));
+                    //New polyline
+                    p.rotate(-this->infill_angle, m.hex_center);
+                    polylines.push_back(p);
+                    //
+                    Polyline p1;
+                    p = p1;
+
+                    p.points.push_back(Point(ax[0], y - m.y_short + m.h));
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short));
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short + m.h));
+                  }
+                  else{
+                    p.points.push_back(Point(ax[1], y));
+                    p.points.push_back(Point(ax[0], y - m.y_short));
+                    p.points.push_back(Point(ax[0], y - m.y_short + m.h));
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short));
+                    //New polyline
+                    p.rotate(-this->infill_angle, m.hex_center);
+                    polylines.push_back(p);
+                    //
+                    Polyline p1;
+                    p = p1;
+                    p.points.push_back(Point(ax[1], y - m.y_short + m.h - m.y_short + m.h));
+                  }
                 }
+                p.rotate(-this->infill_angle, m.hex_center);
+                polylines.push_back(p);
+
                 ax[0] = ax[0] + m.w;
                 ax[1] = ax[1] + m.w;
                 std::swap(ax[0], ax[1]); // draw symmetrical pattern
                 x += m.w;
             }
-            p.rotate(-this->infill_angle, m.hex_center);
-            polygons.push_back(p);
         }
     }
 
-    if (true || this->complete) {
-        // we were requested to complete each loop;
-        // in this case we don't try to make more continuous paths
-        Polygons polygons_trimmed = intersection((Polygons)expolygon, polygons);
-        for (Polygons::iterator it = polygons_trimmed.begin(); it != polygons_trimmed.end(); ++ it)
-            polylines_out->push_back(it->split_at_first_point());
+    if (false) {
+        printf("Something went wrong?");
     } else {
         // consider polygons as polylines without re-appending the initial point:
         // this cuts the last segment on purpose, so that the jump to the next
         // path is more straight
         Polylines paths = intersection_pl(
-            to_polylines(polygons),
+            polylines,
             (Polygons)expolygon
         );
 
@@ -104,14 +125,16 @@ FillArrowhead::_fill_surface_single(
                 PolylineCollection::leftmost_point(paths),
                 false
             );
+            printf("Reordered paths!\n");
             assert(paths.empty());
+            printf("Post assert\n");
             paths.clear();
 
             for (Polylines::iterator it_path = chained.begin(); it_path != chained.end(); ++ it_path) {
                 if (!paths.empty()) {
                     // distance between first point of this path and last point of last path
                     double distance = paths.back().last_point().distance_to(it_path->first_point());
-                    if (distance <= m.hex_width) {
+                    if (distance <= m.w) {
                         paths.back().points.insert(paths.back().points.end(), it_path->points.begin(), it_path->points.end());
                         continue;
                     }
@@ -121,8 +144,8 @@ FillArrowhead::_fill_surface_single(
             }
         }
 
-        // clip paths again to prevent connection segments from crossing the expolygon boundaries
-        paths = intersection_pl(paths, to_polygons(offset_ex(expolygon, SCALED_EPSILON)));
+        //clip paths again to prevent connection segments from crossing the expolygon boundaries
+        paths = intersection_pl(paths, Polygons(expolygon));
 
         // Move the polylines to the output, avoid a deep copy.
         size_t j = polylines_out->size();

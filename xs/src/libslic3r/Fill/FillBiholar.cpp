@@ -39,6 +39,8 @@ namespace Slic3r {
           m.w                 = this->meta_h * m.distance;
         }
 
+        m.r = m.r1 > m.r2 ? m.r1 : m.r2;
+
         m.x_offset           = scale_(this->x_offset);
         m.y_offset           = scale_(this->y_offset);
       }
@@ -84,35 +86,53 @@ namespace Slic3r {
       */
 
       BoundingBox bounding_box1 = expolygon.contour.bounding_box();
-      ExPolygon inpolygons;
+      Polygons inpolygons;
 
-      for (coord_t x = 0; (x*m.w) + bounding_box1.min.x + m.r2 + coord_t(0.5*m.w) + line_spacing <= bounding_box1.max.x; x++ ) {
-        for (coord_t y = 0; (y*m.w) + bounding_box1.min.y + m.r2 + coord_t(0.5*m.w) + line_spacing <= bounding_box1.max.y; y++) {
+      for (coord_t x = 0; (x*m.w) + bounding_box1.min.x <= bounding_box1.max.x + m.r; x++ ) {
+        for (coord_t y = 0; (y*m.w) + bounding_box1.min.y <= bounding_box1.max.y + m.r; y++) {
 
           Polygon p;
+
+
           //generate circular points to add to polygon
 
-          float angle_step = 2*M_PI/36;
+          float angle_step = 2*M_PI/4;
           float radius;
           if((x + y)%2) radius = m.r1;
           else radius = m.r2;
 
-          coord_t xCenter = (x*m.w) + bounding_box1.min.x + coord_t(0.5*m.w);
-          coord_t yCenter = (y*m.w) + bounding_box1.min.y + coord_t(0.5*m.w);
-          for(float i = 2*M_PI; i >= 0; i-= angle_step){ // This is adding the same point 3 times!
+          coord_t xCenter = (x*m.w) + bounding_box1.min.x - m.x_offset;
+          coord_t yCenter = (y*m.w) + bounding_box1.min.y - m.y_offset;
+          for(float i = 0; i <= 2*M_PI; i+= angle_step){
             coord_t x1 = xCenter + coord_t(radius * cos( i ));
             coord_t y1 = yCenter + coord_t(radius * sin( i ));
+            // Change this to be a big interior offset of the exterior polygon.
+            // Still has issues with the line finding stuff!
+            // if(bounding_box1.contains(Point(x1,y1))) p.points.push_back(Point(x1,y1));
+
             p.points.push_back(Point(x1,y1));
           }
 
-          inpolygons.holes.push_back(p);
+
+
+          inpolygons.push_back(p);
         }
       }
 
-      //TODO: Clip polygons
+      // Clip to intersection?
+      //Polygons p2 = intersection(inpolygons.holes, expolygon.contour);
+      offset((Polygons)expolygon, scale_(this->meta_l));
+      Polygons polygons_trimmed = intersection(inpolygons, (Polygons)expolygon);
 
+      if(true){
+        for (Polygons::iterator it = polygons_trimmed.begin(); it != polygons_trimmed.end(); ++ it)
+          out->push_back(it->split_at_first_point());
+      }
       //copy across interior holes
-      polygons_append(expolygon.holes, inpolygons.holes);
+
+      else{
+
+      polygons_append(expolygon.holes, polygons_trimmed);
 
       grid_t grid;
       {
@@ -171,7 +191,7 @@ namespace Slic3r {
 
         const Polygons polygons = expolygon;
 
-        for (Polygons::const_iterator polygon = polygons.begin(); polygon != polygons.end(); ++polygon) { //TODO <- check this goes through all polygons?
+        for (Polygons::const_iterator polygon = polygons.begin(); polygon != polygons.end(); ++polygon) {
           const Points &points = polygon->points;
 
           // This vector holds the original polygon vertices found after the last intersection
@@ -183,6 +203,9 @@ namespace Slic3r {
           Points ips;
 
           for (Points::const_iterator p = points.begin(); p != points.end(); ++p) {
+            // for(Polygons::const_iterator poly = inpolygons.begin(); poly != inpolygons.end(); ++poly){
+            //   if(poly->contains(&&p)) continue;
+            // }
             const Point &prev  = p == points.begin()   ? *(points.end()-1) : *(p-1);
             const Point &next  = p == points.end()-1   ? *points.begin()   : *(p+1);
 
@@ -525,6 +548,9 @@ namespace Slic3r {
       it != out->end(); ++it)
       it->rotate(direction.first);
   }
+//out = paths = intersection_pl(paths, to_polygons(offset_ex(expolygon, SCALED_EPSILON)));
+
+}
 
   void FillBiholar::_fill_surface_single(
     unsigned int                    thickness_layers,

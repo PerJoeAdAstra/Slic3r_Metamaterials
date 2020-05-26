@@ -91,7 +91,7 @@ public:
 
     //Parameter for filename of custom infill pattern. String parsing threw
     //errors so it is commented out
-    // std::string      filename;
+    std::string      filename;
 
 public:
     static Fill* new_from_type(const InfillPattern type);
@@ -131,10 +131,15 @@ protected:
         dont_adjust(false),
         complete(false),
         _spacing(0.f),
-        meta_angle(0),
-        meta_h(0),
-        meta_l(0),
-        meta_isMM(false)
+        meta_angle(0.0f),
+        meta_h(0.f),
+        meta_l(0.f),
+        meta_isMM(false),
+        meta_r1(0.f),
+        meta_r2(0.f),
+        x_offset(0.f),
+        y_offset(0.f),
+        filename("")
         {};
 
     typedef std::pair<float, Point> direction_t;

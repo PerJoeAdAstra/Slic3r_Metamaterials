@@ -1,5 +1,5 @@
-#ifndef slic3r_FillReentrantStars_hpp_
-#define slic3r_FillReentrantStars_hpp_
+#ifndef slic3r_FillReentrantHex2_hpp_
+#define slic3r_FillReentrantHex2_hpp_
 
 #include <map>
 
@@ -9,13 +9,13 @@
 
 namespace Slic3r {
 
-class FillReentrantStars : public Fill
+class FillReentrantHex2 : public Fill
 {
 public:
-    virtual ~FillReentrantStars() {}
+    virtual ~FillReentrantHex2() {}
 
 protected:
-    virtual Fill* clone() const { return new FillReentrantStars(*this); };
+    virtual Fill* clone() const { return new FillReentrantHex2(*this); };
 	virtual void _fill_surface_single(
 	    unsigned int                     thickness_layers,
 	    const direction_t               &direction,
@@ -26,30 +26,24 @@ protected:
 	// Cache the hexagon math.
 	struct CacheData
 	{
-		    coord_t	distance;
-        coord_t hex_scale;
-        coord_t hex_side;
-        coord_t hex_width;
+        coord_t h;
+        coord_t w;
+        coordf_t theta;
+
+        coord_t	distance;
         coord_t	pattern_height;
         coord_t y_short;
-        Point	  hex_center;
-        coord_t starOffset;
-        coord_t starHeight;
-        coord_t in_short;
-        coord_t in_long;
-        coord_t out_short;
-        coord_t out_long;
-
         coord_t x_offset;
+        Point	hex_center;
+
+        coord_t x_pattern_offset;
         coord_t y_offset;
     };
     typedef std::pair<float,coordf_t> CacheID;  // density, spacing
     typedef std::map<CacheID, CacheData> Cache;
 	Cache cache;
-
-    virtual float _layer_angle(size_t idx) const { return float(M_PI/3.) * (idx % 3); }
 };
 
 } // namespace Slic3r
 
-#endif // slic3r_FillReentrantStars_hpp_
+#endif // slic3r_FillReentrantHex_hpp_
